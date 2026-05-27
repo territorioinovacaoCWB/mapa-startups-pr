@@ -1,0 +1,28 @@
+name: Executar Agente de CNPJ
+
+on:
+  push:
+    paths:
+      - 'dados_cnpjs.csv'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Instalar dependências
+      run: pip install -r requirements.txt
+    - name: Rodar script de extração
+      run: python crawler_cnpj.py
+    - name: Salvar alterações
+      run: |
+        git config --global user.name "GitHub Action Bot"
+        git config --global user.email "actions@github.com"
+        git add startups_data.json
+        git diff-index --quiet HEAD || git commit -m "Auto: dados de startups atualizados"
+        git push
