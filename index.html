@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Mapa de Startups - Paraná | Ecossistema Inovador</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%); color: #1a202c; }
+
+.nav-tabs {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.tab-button {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: rgba(255,255,255,0.7);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
+.tab-button.active { background: white; color: #0f172a; }
+
+.hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 2rem 2rem 0 2rem; position: relative; }
+.hero-content { max-width: 1400px; margin: 0 auto; padding-bottom: 2rem; }
+.hero h1 { font-size: 2rem; display: flex; align-items: center; gap: 12px; }
+.hero h1 i { color: #38bdf8; }
+.hero p { margin-top: 0.5rem; font-size: 0.95rem; color: #cbd5e1; }
+.stats-badge { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+.stat { background: rgba(255,255,255,0.1); padding: 0.3rem 1rem; border-radius: 30px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; }
+
+.dashboard { max-width: 1400px; margin: 1.5rem auto 2rem auto; padding: 0 1.5rem; position: relative; z-index: 10; }
+.metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; max-width: 600px; }
+.metric-card { background: white; padding: 1rem; border-radius: 0.75rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.metric-card h3 { font-size: 0.7rem; text-transform: uppercase; color: #64748b; margin-bottom: 0.5rem; }
+.metric-card .value { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
+
+/* Card especial para mulheres */
+.metric-card.mulheres { border-top: 3px solid #e91e8c; }
+.metric-card.mulheres .value { color: #e91e8c; }
+
+.controls { background: white; border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.search-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.search-box { flex: 1; min-width: 200px; display: flex; align-items: center; background: #f8fafc; border-radius: 8px; padding: 0.5rem 0.75rem; gap: 8px; border: 1px solid #e2e8f0; }
+.search-box input { border: none; background: transparent; width: 100%; font-size: 0.85rem; outline: none; font-family: 'Inter', sans-serif; }
+
+/* Botões de filtro */
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+  border: 1px solid;
+}
+.filter-btn.mulheres-btn  { background: #fdf2f8; border-color: #f9a8d4; color: #be185d; }
+.filter-btn.mulheres-btn:hover  { background: #fce7f3; }
+.filter-btn.mulheres-btn.ativo  { background: #e91e8c; color: white; border-color: #e91e8c; }
+.filter-btn.curitiba-btn  { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
+.filter-btn.curitiba-btn:hover  { background: #e2e8f0; }
+.filter-btn.curitiba-btn.ativo  { background: #0f172a; color: white; border-color: #0f172a; }
+.filter-btn.parana-btn  { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+.filter-btn.parana-btn:hover  { background: #dcfce7; }
+.filter-btn.parana-btn.ativo  { background: #059669; color: white; border-color: #059669; }
+
+.grid-main { display: flex; flex-wrap: wrap; gap: 1rem; }
+.map-card { flex: 2; min-width: 280px; background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.map-header { padding: 0.75rem 1rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 0.85rem; }
+#map { height: 600px; width: 100%; }
+
+.list-card { flex: 1.2; min-width: 300px; background: white; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; overflow: hidden; }
+.list-header { padding: 0.75rem 1rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 600; display: flex; justify-content: space-between; }
+.startup-list { flex: 1; overflow-y: auto; max-height: 600px; padding: 0.5rem; }
+
+.startup-item { background: white; border: 1px solid #e2e8f0; margin-bottom: 0.5rem; padding: 0.75rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.startup-item:hover { background: #f8fafc; transform: translateX(2px); }
+
+/* Destaque para empresas de mulheres */
+.startup-item.mulher { border-left: 3px solid #e91e8c; }
+.startup-item.mulher:hover { background: #fdf2f8; }
+
+.startup-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.25rem; }
+.area-badge { background: #e0e7ff; color: #4338ca; padding: 0.15rem 0.4rem; border-radius: 12px; font-size: 0.65rem; font-weight: 600; display: inline-block; margin-bottom: 0.25rem; }
+
+/* Badge especial mulheres */
+.badge-mulher { background: #fce7f3; color: #be185d; padding: 0.15rem 0.4rem; border-radius: 12px; font-size: 0.65rem; font-weight: 700; display: inline-block; margin-bottom: 0.25rem; margin-left: 0.25rem; }
+
+.info-row { display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; color: #475569; margin-top: 0.25rem; }
+.info-row i { width: 14px; color: #667eea; font-size: 0.65rem; }
+.capital-value { color: #059669; font-weight: 600; }
+
+/* Matérias */
+.card-materia { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto; animation: fadeIn 0.5s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.card-materia h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
+.card-materia .data-materia { font-size: 0.8rem; color: #94a3b8; margin-bottom: 1rem; display: block; }
+.card-materia p { margin-top: 1.5rem; line-height: 1.6; color: #475569; font-size: 1rem; }
+.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-top: 15px; border-radius: 8px; background: #f1f5f9; }
+.video-wrapper iframe, .video-wrapper video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+footer { text-align: center; padding: 1.5rem; font-size: 0.7rem; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 1.5rem; }
+
+.legend { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); line-height: 1.5; font-size: 0.75rem; }
+.legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; }
+
+.erro-json { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem; color: #991b1b; font-size: 0.8rem; margin: 1rem; }
+
+@media (max-width: 768px) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero h1 { font-size: 1.5rem; }
+  .card-materia { padding: 1.5rem; }
+  .search-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1><i class="fas fa-map-marker-alt"></i> Mapa de Startups · Paraná</h1>
+    <p>Explore o ecossistema inovador de Curitiba e de todo o estado</p>
+    <div class="stats-badge">
+      <span class="stat"><i class="fas fa-chart-line"></i> Ecossistema em crescimento</span>
+      <span class="stat"><i class="fas fa-users"></i> Polo de Inovação</span>
+      <span class="stat"><i class="fas fa-trophy"></i> Startups de Impacto</span>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-button active" onclick="openTab(event, 'tab-mapa')">Mapa Interativo</button>
+    <button class="tab-button" onclick="openTab(event, 'tab-conteudo')">Matérias e Conteúdos</button>
+  </div>
+</div>
+
+<!-- ABA 1: MAPA -->
+<div id="tab-mapa" class="tab-content">
+  <div class="dashboard">
+    <div class="metrics-grid">
+      <div class="metric-card"><h3>TOTAL DE STARTUPS</h3><div class="value" id="totalStartups">0</div></div>
+      <div class="metric-card"><h3>ÁREAS DE ATUAÇÃO</h3><div class="value" id="totalAreas">0</div></div>
+    </div>
+    <div class="controls">
+      <div class="search-row">
+        <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Buscar por nome, área de atuação, cidade..."></div>
+        <button class="filter-btn mulheres-btn" id="btnMulheres" onclick="toggleFiltro('mulheres')">
+          <i class="fas fa-venus"></i> Mulheres
+        </button>
+        <button class="filter-btn curitiba-btn" id="btnCuritiba" onclick="toggleFiltro('curitiba')">
+          <i class="fas fa-city"></i> Curitiba
+        </button>
+        <button class="filter-btn parana-btn" id="btnParana" onclick="toggleFiltro('parana')">
+          <i class="fas fa-map"></i> Interior PR
+        </button>
+      </div>
+    </div>
+    <div class="grid-main">
+      <div class="map-card">
+        <div class="map-header"><i class="fas fa-map-marker-alt"></i> Localização das Startups</div>
+        <div id="map"></div>
+      </div>
+      <div class="list-card">
+        <div class="list-header"><span><i class="fas fa-list"></i> Lista de Startups</span><span id="resultCount">0 resultados</span></div>
+        <div id="startupListContainer" class="startup-list"><div class="info-row" style="justify-content:center;">Carregando...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABA 2: MATÉRIAS -->
+<div id="tab-conteudo" class="tab-content" style="display:none;">
+  <div class="hero-content" style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+    <h2 style="margin-bottom: 20px; color: #0f172a;">Matérias e Conteúdos</h2>
+    <div id="materiasContainer" class="content-grid"></div>
+  </div>
+</div>
+
+<footer><i class="fas fa-database"></i> Dados atualizados | Mapa interativo | Fonte: startups_data.json</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ==========================================
+// EMPRESAS LIDERADAS POR MULHERES
+// ==========================================
+const EMPRESAS_MULHERES = new Set([
+  '7 DIGITAL TECH SOLUCOES DIGITAIS LTDA',
+  'ADSMAT - PESQUISA E DESENVOLVIMENTO DE BIOMATERIAIS E MATERIAIS DE CERAMICAS AVANCADOS LTDA',
+  'AKADIA CENTRO DE LINGUAS ONLINE LTDA',
+  'AZAGROS - AGROTECNOLOGIA LTDA',
+  'BREVENLAW TRATAMENTO DE DADOS LTDA',
+  'C. PORTO ASSESSORIA E CONSULTORIA LTDA',
+  'COISA DE MULHER LTDA.',
+  'COISA DE MULHER LTDA',
+  'LGPD NO FRONT LTDA',
+  'PIGMA DESENVOLVIMENTOS LTDA',
+  'TRACKTUM TECNOLOGIA S/A',
+]);
+
+function ehEmpresaMulher(nome) {
+  if (!nome) return false;
+  const n = nome.trim().toUpperCase();
+  for (const empresa of EMPRESAS_MULHERES) {
+    if (n === empresa.toUpperCase() || n.startsWith(empresa.replace(/\.$/, '').toUpperCase())) return true;
+  }
+  return false;
+}
+
+// ==========================================
+// MATÉRIAS
+// ==========================================
+const listaDeMaterias = [
+  {
+    id: 1,
+    data: "2024-05-20",
+    titulo: "O Futuro da Inovação no Paraná",
+    descricao: "O ecossistema de inovação do Paraná tem se destacado nacionalmente pela resiliência e diversidade de suas startups. Nesta reportagem especial, exploramos como a integração entre academia, governo e iniciativa privada está transformando o estado em um dos principais hubs tecnológicos da América Latina.",
+    tipo: "youtube",
+    url: "https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&modestbranding=1&rel=0",
+    poster: ""
+  }
+];
+
+function renderizarMaterias() {
+  const container = document.getElementById('materiasContainer');
+  const ordenadas = [...listaDeMaterias].sort((a, b) => new Date(b.data) - new Date(a.data));
+  container.innerHTML = ordenadas.map(m => {
+    let playerHTML = '';
+    if (m.tipo === 'youtube' || m.tipo === 'vimeo') {
+      playerHTML = `<iframe src="${m.url}" frameborder="0" allowfullscreen></iframe>`;
+    } else if (m.tipo === 'nativo') {
+      playerHTML = `<video width="100%" controls poster="${m.poster}"><source src="${m.url}" type="video/mp4"></video>`;
+    }
+    const dataFormatada = new Date(m.data + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    return `<div class="card-materia">
+      <span class="data-materia">${dataFormatada}</span>
+      <h3>${m.titulo}</h3>
+      <div class="video-wrapper" ${m.tipo === 'nativo' ? 'style="padding-bottom:0;height:auto;"' : ''}>${playerHTML}</div>
+      <p>${m.descricao}</p>
+    </div>`;
+  }).join('');
+}
+
+// ==========================================
+// ABAS
+// ==========================================
+function openTab(evt, tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).style.display = 'block';
+  evt.currentTarget.classList.add('active');
+  if (tabId === 'tab-mapa' && map) setTimeout(() => map.invalidateSize(), 100);
+  if (tabId === 'tab-conteudo') renderizarMaterias();
+}
+
+// ==========================================
+// MAPA E DADOS
+// ==========================================
+let startupsData = [];
+let map, markers = [], currentFilter = '';
+const curitibaCenter = [-25.4284, -49.2733];
+
+function limparArea(texto) {
+  if (!texto) return 'Tecnologia/Serviços';
+  if (typeof texto === 'object') return texto.text || texto.description || texto.name || 'Tecnologia/Serviços';
+  if (typeof texto !== 'string') return 'Tecnologia/Serviços';
+  let match = texto.match(/['"]text['"]\s*:\s*['"]([^'"]+)['"]/);
+  if (match) return match[1].trim();
+  match = texto.match(/['"]description['"]\s*:\s*['"]([^'"]+)['"]/);
+  if (match) return match[1].trim();
+  const limpo = texto.replace(/[\[\]{}]/g, '').replace(/'code'\s*:\s*'[^']*'/gi, '').replace(/"code"\s*:\s*"[^"]*"/gi, '').replace(/'text'\s*:\s*/gi, '').replace(/"text"\s*:\s*/gi, '').replace(/['"]/g, '').replace(/,/g, ' ').trim();
+  return limpo || 'Tecnologia/Serviços';
+}
+
+function initMap() {
+  map = L.map('map').setView(curitibaCenter, 12);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OSM', subdomains: 'abcd', maxZoom: 18 }).addTo(map);
+
+  const legend = L.control({ position: 'bottomright' });
+  legend.onAdd = function () {
+    const div = L.DomUtil.create('div', 'legend');
+    div.innerHTML = `
+      <div class="legend-item"><span class="dot" style="background:#e91e8c;"></span> Liderada por mulher</div>
+      <div class="legend-item"><span class="dot" style="background:#000000;"></span> Curitiba</div>
+      <div class="legend-item"><span class="dot" style="background:#059669;"></span> Resto do Paraná</div>`;
+    return div;
+  };
+  legend.addTo(map);
+}
+
+function formatarCapital(valor) {
+  if (!valor || valor === 0) return 'N/I';
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(valor);
+}
+
+function getMarkerIcon(nome, municipio, endereco) {
+  if (ehEmpresaMulher(nome)) {
+    return L.divIcon({
+      className: 'custom-div-icon',
+      html: `<div style='background-color:#e91e8c; width:14px; height:14px; border-radius:50%; border:2px solid white; box-shadow: 0 0 6px rgba(233,30,140,0.6);'></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7]
+    });
+  }
+  const textoParaBusca = ((municipio || '') + ' ' + (endereco || '')).toUpperCase();
+  const isCuritiba = textoParaBusca.includes('CURITIBA');
+  const color = isCuritiba ? '#000000' : '#059669';
+  return L.divIcon({
+    className: 'custom-div-icon',
+    html: `<div style='background-color:${color}; width:12px; height:12px; border-radius:50%; border:2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3);'></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6]
+  });
+}
+
+function atualizarMetricas(startups) {
+  document.getElementById('totalStartups').textContent = startups.length;
+  document.getElementById('totalAreas').textContent = new Set(startups.map(s => s.area_atuacao).filter(Boolean)).size;
+}
+
+let filtroAtivo = null; // 'mulheres' | 'curitiba' | 'parana' | null
+
+function toggleFiltro(tipo) {
+  filtroAtivo = filtroAtivo === tipo ? null : tipo;
+  document.getElementById('btnMulheres').classList.toggle('ativo', filtroAtivo === 'mulheres');
+  document.getElementById('btnCuritiba').classList.toggle('ativo', filtroAtivo === 'curitiba');
+  document.getElementById('btnParana').classList.toggle('ativo', filtroAtivo === 'parana');
+  renderMapAndList(currentFilter);
+}
+
+function renderMapAndList(filterText = '') {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+
+  const term = filterText.toLowerCase().trim();
+  let filtered = startupsData.filter(s => {
+    if (!term) return true;
+    return (
+      (s.nome && s.nome.toLowerCase().includes(term)) ||
+      (s.area_atuacao && s.area_atuacao.toLowerCase().includes(term)) ||
+      (s.endereco && s.endereco.toLowerCase().includes(term)) ||
+      (s.municipio && s.municipio.toLowerCase().includes(term))
+    );
+  });
+
+  if (filtroAtivo === 'mulheres') {
+    filtered = filtered.filter(s => ehEmpresaMulher(s.nome));
+  } else if (filtroAtivo === 'curitiba') {
+    filtered = filtered.filter(s => (s.municipio || s.endereco || '').toUpperCase().includes('CURITIBA'));
+  } else if (filtroAtivo === 'parana') {
+    filtered = filtered.filter(s => !(s.municipio || s.endereco || '').toUpperCase().includes('CURITIBA'));
+  }
+
+  atualizarMetricas(filtered);
+  document.getElementById('resultCount').textContent = `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`;
+
+  const container = document.getElementById('startupListContainer');
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="info-row" style="justify-content:center;">Nenhuma startup encontrada</div>';
+  } else {
+    container.innerHTML = filtered.map((s, idx) => {
+      const isMulher = ehEmpresaMulher(s.nome);
+      return `<div class="startup-item${isMulher ? ' mulher' : ''}" data-idx="${idx}">
+        <div class="startup-name">${s.nome}</div>
+        <span class="area-badge">${s.area_atuacao}</span>
+        ${isMulher ? '<span class="badge-mulher">♀ Liderança Feminina</span>' : ''}
+        <div class="info-row"><i class="fas fa-map-pin"></i> ${s.endereco || 'Endereço não informado'}</div>
+        <div class="info-row"><i class="fas fa-dollar-sign"></i> <span class="capital-value">${formatarCapital(s.capital)}</span></div>
+        <div class="info-row"><i class="fas fa-info-circle"></i> Status: <span style="color:${s.situacao === 'ATIVA' ? '#059669' : '#dc2626'}">${s.situacao || 'N/I'}</span></div>
+        ${s.contatos && s.contatos.email && s.contatos.email !== 'nan' ? `<div class="info-row"><i class="fas fa-envelope"></i> ${s.contatos.email}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    container.querySelectorAll('.startup-item').forEach(item => {
+      const idx = parseInt(item.dataset.idx, 10);
+      item.addEventListener('click', () => {
+        const s = filtered[idx];
+        if (s.lat && s.lng) {
+          map.setView([s.lat, s.lng], 16);
+          const targetMarker = markers.find(m => m.options.title === s.nome);
+          if (targetMarker) targetMarker.openPopup();
+        }
+      });
+    });
+  }
+
+  filtered.forEach(s => {
+    if (s.lat && s.lng) {
+      const isMulher = ehEmpresaMulher(s.nome);
+      const popup = `<div style="font-family:Inter; min-width:200px;">
+        ${isMulher ? '<div style="background:#fce7f3;color:#be185d;padding:3px 8px;border-radius:12px;font-size:0.7rem;font-weight:700;margin-bottom:6px;display:inline-block;">♀ Liderança Feminina</div>' : ''}
+        <strong style="font-size:0.9rem;">${s.nome}</strong><br>
+        📁 ${s.area_atuacao}<br>
+        📍 ${s.endereco || 'N/I'}<br>
+        💰 <span style="color:#059669;font-weight:600;">${formatarCapital(s.capital)}</span><br>
+        📊 Status: <strong>${s.situacao || 'N/I'}</strong><br>
+        ${s.contatos && s.contatos.email && s.contatos.email !== 'nan' ? `✉️ ${s.contatos.email}<br>` : ''}
+        ${s.contatos && s.contatos.telefone ? `📞 ${s.contatos.telefone}` : ''}
+      </div>`;
+
+      const marker = L.marker([s.lat, s.lng], {
+        title: s.nome,
+        icon: getMarkerIcon(s.nome, s.municipio, s.endereco)
+      }).addTo(map).bindPopup(popup);
+
+      markers.push(marker);
+    }
+  });
+
+  if (markers.length > 1) map.fitBounds(L.featureGroup(markers).getBounds().pad(0.1));
+  else if (markers.length === 1) map.setView(markers[0].getLatLng(), 15);
+}
+
+async function loadData() {
+  const container = document.getElementById('startupListContainer');
+  try {
+    const response = await fetch('startups_data.json');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    let text = await response.text();
+    text = text.trim();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e1) {
+      let corrigido = text;
+      if (corrigido.endsWith(',')) corrigido = corrigido.slice(0, -1);
+      if (!corrigido.endsWith(']')) corrigido += ']';
+      if (!corrigido.startsWith('[')) corrigido = '[' + corrigido;
+      try {
+        data = JSON.parse(corrigido);
+      } catch (e2) {
+        const ultimo = corrigido.lastIndexOf('},');
+        if (ultimo !== -1) data = JSON.parse(corrigido.substring(0, ultimo + 1) + ']');
+        else throw new Error('JSON inválido');
+      }
+    }
+    if (!Array.isArray(data)) throw new Error('JSON não é um array');
+
+    startupsData = data.map(s => {
+      const nome = s.nome_fantasia || s.nome || s.razao_social || 'Sem nome';
+      const area = limparArea(s.area_atuacao);
+      const lat = s.localizacao ? s.localizacao.latitude : s.lat;
+      const lng = s.localizacao ? s.localizacao.longitude : s.lng;
+      const endereco = (s.localizacao && s.localizacao.logradouro)
+        ? `${s.localizacao.logradouro}, ${s.localizacao.numero || 'S/N'} - ${s.localizacao.bairro || ''}, ${s.localizacao.municipio || ''}/${s.localizacao.estado || ''}`
+        : (s.endereco || '');
+      const contatos = s.contatos || { email: null, telefone: null };
+      return { ...s, nome, area_atuacao: area, endereco, lat, lng, contatos };
+    }).filter(s => s.lat && s.lng);
+
+    renderMapAndList('');
+  } catch (err) {
+    console.error('Erro ao carregar dados:', err);
+    container.innerHTML = `<div class="erro-json"><strong>⚠️ Erro ao carregar os dados</strong><br>${err.message}</div>`;
+    atualizarMetricas([]);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initMap();
+  loadData();
+  document.getElementById('searchInput').addEventListener('input', e => {
+    currentFilter = e.target.value;
+    renderMapAndList(currentFilter);
+  });
+});
+</script>
+</body>
+</html>
