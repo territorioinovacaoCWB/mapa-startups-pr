@@ -679,6 +679,16 @@ function openTab(evt,tabId){
   document.querySelectorAll('.nav-tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
   evt.currentTarget.classList.add('active');
+
+  // Mostrar/ocultar seções exclusivas do mapa
+  const soMapa = ['tab-mapa'];
+  const mostrar = soMapa.includes(tabId);
+  const sectionsToHide = [
+    document.querySelector('.section-metrics'),
+    document.querySelector('.controls-wrap')
+  ];
+  sectionsToHide.forEach(el => { if(el) el.style.display = mostrar ? '' : 'none'; });
+
   if(tabId==='tab-mapa'&&map) setTimeout(()=>map.invalidateSize(),100);
   if(tabId==='tab-conteudo') renderizarMaterias();
 }
