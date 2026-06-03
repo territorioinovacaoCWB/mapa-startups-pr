@@ -186,6 +186,118 @@ body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a202c; }
 .legend-item { display:flex; align-items:center; gap:7px; }
 .dot { height:10px; width:10px; border-radius:50%; display:inline-block; flex-shrink:0; }
 .erro-json { background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:1rem; color:#991b1b; font-size:0.8rem; margin:1rem; }
+
+/* ─── PÁGINAS ESTÁTICAS (Metodologia / Créditos) ─── */
+.static-page { max-width:900px; margin:0 auto; padding:0 2rem 3rem 2rem; }
+.static-hero {
+  background:linear-gradient(135deg,#1a1f5e,#2d3494);
+  color:white; padding:3rem 2.5rem; border-radius:0 0 16px 16px;
+  margin-bottom:2.5rem;
+}
+.static-hero h1 { font-size:2rem; font-weight:800; margin-bottom:0.75rem; display:flex; align-items:center; gap:12px; }
+.static-hero h1 i { color:#38bdf8; }
+.static-hero p { font-size:1rem; color:rgba(255,255,255,0.8); max-width:600px; line-height:1.6; }
+
+/* Passos da metodologia */
+.metod-step {
+  display:flex; gap:1.5rem; margin-bottom:2rem;
+  background:white; border-radius:12px; padding:1.75rem;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+.step-num {
+  font-size:2.5rem; font-weight:900; color:#e2e8f0;
+  flex-shrink:0; line-height:1; min-width:56px;
+  font-variant-numeric:tabular-nums;
+}
+.step-content h2 { font-size:1.1rem; color:#0f172a; margin-bottom:0.6rem; }
+.step-content p { color:#475569; line-height:1.65; font-size:0.9rem; }
+.code-box {
+  background:#0f172a; border-radius:8px; padding:0.75rem 1rem;
+  margin-top:0.9rem; display:flex; flex-direction:column; gap:4px;
+}
+.code-label { font-size:0.65rem; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; }
+.code-box code { color:#38bdf8; font-size:0.8rem; font-family:monospace; word-break:break-all; }
+
+/* Pipeline flow */
+.pipeline-flow {
+  display:flex; align-items:center; gap:0.5rem;
+  flex-wrap:wrap; margin-top:1.2rem;
+}
+.pipe-step {
+  background:#f8fafc; border:1px solid #e2e8f0;
+  border-radius:8px; padding:0.5rem 0.75rem;
+  display:flex; align-items:center; gap:6px;
+  font-size:0.75rem; font-weight:600; color:#334155;
+}
+.pipe-step i { color:#667eea; }
+.pipe-arrow { color:#cbd5e1; font-size:0.75rem; }
+
+/* Lista de critérios */
+.criterios-list { list-style:none; margin-top:0.75rem; display:flex; flex-direction:column; gap:0.5rem; }
+.criterios-list li { display:flex; align-items:center; gap:8px; font-size:0.88rem; color:#334155; }
+.criterios-list li i { color:#059669; }
+
+/* Seção títulos */
+.section-title {
+  font-size:1.2rem; color:#0f172a; margin-bottom:1.2rem;
+  display:flex; align-items:center; gap:8px;
+}
+.section-title i { color:#667eea; }
+
+/* Cards de equipe */
+.team-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; }
+.team-card {
+  background:white; border-radius:12px; padding:1.5rem;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  display:flex; gap:1rem; align-items:flex-start;
+}
+.team-avatar {
+  width:48px; height:48px; border-radius:50%;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  display:flex; align-items:center; justify-content:center;
+  color:white; font-size:1.1rem; flex-shrink:0;
+}
+.team-name { font-weight:700; font-size:0.9rem; color:#0f172a; }
+.team-role { font-size:0.72rem; color:#667eea; font-weight:600; margin-bottom:0.4rem; }
+.team-info p { font-size:0.78rem; color:#64748b; line-height:1.5; margin-top:0.3rem; }
+
+/* Cards de fontes */
+.fontes-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; }
+.fonte-card {
+  background:white; border-radius:12px; padding:1.1rem 1.2rem;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  display:flex; align-items:center; gap:1rem;
+  text-decoration:none; transition:transform 0.2s,box-shadow 0.2s;
+  border:1px solid #f1f5f9;
+}
+.fonte-card:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.1); }
+.fonte-icon {
+  width:40px; height:40px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; flex-shrink:0;
+}
+.fonte-nome { font-weight:700; font-size:0.85rem; color:#0f172a; }
+.fonte-desc { font-size:0.72rem; color:#64748b; margin-top:2px; }
+.fonte-link-icon { color:#cbd5e1; font-size:0.7rem; margin-left:auto; flex-shrink:0; }
+
+/* Licença */
+.licenca-box {
+  background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px;
+  padding:1.25rem 1.5rem; margin-top:2rem;
+  display:flex; gap:1rem; align-items:flex-start;
+}
+.licenca-box i { color:#667eea; font-size:1.2rem; margin-top:2px; flex-shrink:0; }
+.licenca-box strong { font-size:0.9rem; color:#0f172a; display:block; margin-bottom:0.3rem; }
+.licenca-box p { font-size:0.8rem; color:#64748b; line-height:1.5; }
+
+@media(max-width:768px){
+  .metod-step { flex-direction:column; }
+  .step-num { font-size:1.8rem; }
+  .pipeline-flow { gap:0.35rem; }
+  .static-hero { padding:2rem 1.25rem; }
+  .static-hero h1 { font-size:1.5rem; }
+}
+
 footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; border-top:1px solid #e2e8f0; }
 
 @media(max-width:768px){
@@ -205,11 +317,10 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
   <div class="navbar-tabs">
     <button class="nav-tab-btn active" onclick="openTab(event,'tab-mapa')">Mapa Interativo</button>
     <button class="nav-tab-btn" onclick="openTab(event,'tab-conteudo')">Matérias e Conteúdos</button>
+    <button class="nav-tab-btn" onclick="openTab(event,'tab-metodologia')">Metodologia</button>
+    <button class="nav-tab-btn" onclick="openTab(event,'tab-creditos')">Créditos</button>
   </div>
-  <div class="navbar-links">
-    <a href="#">Metodologia</a>
-    <a href="#">Créditos</a>
-  </div>
+  <div class="navbar-links"></div>
 </nav>
 
 <!-- HERO -->
@@ -352,6 +463,186 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
   <div style="max-width:1200px;margin:2rem auto;padding:0 2rem;">
     <h2 style="margin-bottom:1.5rem;color:#0f172a;">Matérias e Conteúdos</h2>
     <div id="materiasContainer"></div>
+  </div>
+</div>
+
+
+<!-- METODOLOGIA -->
+<div class="tab-content" id="tab-metodologia">
+  <div class="static-page">
+    <div class="static-hero">
+      <h1><i class="fas fa-microscope"></i> Metodologia</h1>
+      <p>Entenda como os dados do Mapa de Startups do Paraná foram coletados, processados e georreferenciados.</p>
+    </div>
+    <div class="static-body">
+
+      <div class="metod-step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h2>Levantamento de CNPJs</h2>
+          <p>O ponto de partida foi um levantamento manual e colaborativo de CNPJs de empresas inovadoras ativas no estado do Paraná. As empresas foram identificadas por meio de bases públicas, programas de inovação estaduais, aceleradoras e hubs tecnológicos da região, resultando em uma lista com centenas de CNPJs para serem processados.</p>
+        </div>
+      </div>
+
+      <div class="metod-step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h2>Consulta via BrasilAPI</h2>
+          <p>Cada CNPJ foi consultado automaticamente na <strong>BrasilAPI</strong> (<code>brasilapi.com.br/api/cnpj/v1/</code>), uma API pública que retorna dados cadastrais completos da Receita Federal, incluindo razão social, área de atuação (CNAE), endereço, situação cadastral, data de abertura e informações de contato. O processo foi automatizado via script Python com tratamento de erros e cache incremental para evitar reprocessamento.</p>
+          <div class="code-box">
+            <span class="code-label">Exemplo de endpoint</span>
+            <code>GET https://brasilapi.com.br/api/cnpj/v1/{cnpj}</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="metod-step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h2>Georreferenciamento com OpenStreetMap</h2>
+          <p>Com os endereços obtidos da BrasilAPI, realizamos a geocodificação de cada empresa usando o serviço <strong>Nominatim</strong> do OpenStreetMap. O endereço completo (logradouro, número, bairro, município e estado) foi enviado à API, que retorna as coordenadas de latitude e longitude para posicionamento no mapa interativo. Por respeito aos termos de uso do Nominatim, um intervalo mínimo de 1,1 segundo foi mantido entre cada requisição.</p>
+          <div class="code-box">
+            <span class="code-label">Exemplo de endpoint</span>
+            <code>GET https://nominatim.openstreetmap.org/search?q={endereço}&format=json</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="metod-step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h2>Automação e Atualização Contínua</h2>
+          <p>Todo o pipeline de coleta e atualização é executado automaticamente via <strong>GitHub Actions</strong>. Sempre que um novo CNPJ é adicionado ao arquivo de entrada (<code>dados_cnpjs.csv</code>), o workflow é disparado, consulta a BrasilAPI, realiza o georreferenciamento e salva os dados atualizados no arquivo <code>startups_data.json</code>, que alimenta o mapa em tempo real.</p>
+          <div class="pipeline-flow">
+            <div class="pipe-step"><i class="fas fa-file-csv"></i><span>dados_cnpjs.csv</span></div>
+            <i class="fas fa-arrow-right pipe-arrow"></i>
+            <div class="pipe-step"><i class="fas fa-robot"></i><span>GitHub Actions</span></div>
+            <i class="fas fa-arrow-right pipe-arrow"></i>
+            <div class="pipe-step"><i class="fas fa-database"></i><span>BrasilAPI</span></div>
+            <i class="fas fa-arrow-right pipe-arrow"></i>
+            <div class="pipe-step"><i class="fas fa-map-marker-alt"></i><span>OpenStreetMap</span></div>
+            <i class="fas fa-arrow-right pipe-arrow"></i>
+            <div class="pipe-step"><i class="fas fa-map"></i><span>Mapa ao vivo</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metod-step">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h2>Critérios de Inclusão</h2>
+          <p>Foram incluídas no mapa empresas que atendem aos seguintes critérios:</p>
+          <ul class="criterios-list">
+            <li><i class="fas fa-check-circle"></i> Situação cadastral <strong>ATIVA</strong> na Receita Federal</li>
+            <li><i class="fas fa-check-circle"></i> Endereço localizado no estado do <strong>Paraná</strong></li>
+            <li><i class="fas fa-check-circle"></i> Atuação em áreas de <strong>tecnologia, inovação ou P&D</strong></li>
+            <li><i class="fas fa-check-circle"></i> Coordenadas geográficas válidas obtidas via geocodificação</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CRÉDITOS -->
+<div class="tab-content" id="tab-creditos">
+  <div class="static-page">
+    <div class="static-hero">
+      <h1><i class="fas fa-heart"></i> Créditos</h1>
+      <p>Este projeto é resultado de um trabalho colaborativo entre jornalistas, desenvolvedores e entusiastas da inovação paranaense.</p>
+    </div>
+    <div class="static-body">
+
+      <h2 class="section-title"><i class="fas fa-users"></i> Equipe</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar"><i class="fas fa-user"></i></div>
+          <div class="team-info">
+            <div class="team-name">Equipe de Jornalismo</div>
+            <div class="team-role">Reportagem & Curadoria de Dados</div>
+            <p>Responsável pelo levantamento dos CNPJs, apuração das informações e produção das matérias sobre o ecossistema de startups do Paraná.</p>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar"><i class="fas fa-code"></i></div>
+          <div class="team-info">
+            <div class="team-name">Equipe de Desenvolvimento</div>
+            <div class="team-role">Engenharia de Dados & Visualização</div>
+            <p>Desenvolveu o pipeline de coleta automática via BrasilAPI e GitHub Actions, e construiu o mapa interativo com georreferenciamento.</p>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar"><i class="fas fa-paint-brush"></i></div>
+          <div class="team-info">
+            <div class="team-name">Equipe de Design</div>
+            <div class="team-role">UX & Identidade Visual</div>
+            <p>Criou a identidade visual do projeto, incluindo a logomarca, paleta de cores e o design da interface do mapa interativo.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title" style="margin-top:2.5rem;"><i class="fas fa-database"></i> Fontes de Dados e Ferramentas</h2>
+      <div class="fontes-grid">
+        <a class="fonte-card" href="https://brasilapi.com.br" target="_blank">
+          <div class="fonte-icon" style="background:#e0f2fe;color:#0284c7;"><i class="fas fa-plug"></i></div>
+          <div class="fonte-info">
+            <div class="fonte-nome">BrasilAPI</div>
+            <div class="fonte-desc">Dados cadastrais de CNPJs via Receita Federal</div>
+          </div>
+          <i class="fas fa-external-link-alt fonte-link-icon"></i>
+        </a>
+        <a class="fonte-card" href="https://www.openstreetmap.org" target="_blank">
+          <div class="fonte-icon" style="background:#dcfce7;color:#15803d;"><i class="fas fa-map"></i></div>
+          <div class="fonte-info">
+            <div class="fonte-nome">OpenStreetMap + Nominatim</div>
+            <div class="fonte-desc">Geocodificação de endereços e mapa base</div>
+          </div>
+          <i class="fas fa-external-link-alt fonte-link-icon"></i>
+        </a>
+        <a class="fonte-card" href="https://leafletjs.com" target="_blank">
+          <div class="fonte-icon" style="background:#f0fdf4;color:#16a34a;"><i class="fas fa-layer-group"></i></div>
+          <div class="fonte-info">
+            <div class="fonte-nome">Leaflet.js</div>
+            <div class="fonte-desc">Biblioteca de mapas interativos open source</div>
+          </div>
+          <i class="fas fa-external-link-alt fonte-link-icon"></i>
+        </a>
+        <a class="fonte-card" href="https://github.com/features/actions" target="_blank">
+          <div class="fonte-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="fas fa-robot"></i></div>
+          <div class="fonte-info">
+            <div class="fonte-nome">GitHub Actions</div>
+            <div class="fonte-desc">Automação do pipeline de coleta e atualização de dados</div>
+          </div>
+          <i class="fas fa-external-link-alt fonte-link-icon"></i>
+        </a>
+        <a class="fonte-card" href="https://www.receita.fazenda.gov.br" target="_blank">
+          <div class="fonte-icon" style="background:#fff7ed;color:#c2410c;"><i class="fas fa-landmark"></i></div>
+          <div class="fonte-info">
+            <div class="fonte-nome">Receita Federal</div>
+            <div class="fonte-desc">Base oficial de CNPJs e dados empresariais</div>
+          </div>
+          <i class="fas fa-external-link-alt fonte-link-icon"></i>
+        </a>
+        <a class="fonte-card" href="https://carto.com" target="_blank">
+          <div class="fonte-icon" style="background:#fef9c3;color:#a16207;"><i class="fas fa-globe"></i></div>
+          <div class="fonte-info">
+            <div class="fonte-nome">CARTO</div>
+            <div class="fonte-desc">Tiles do mapa base (CartoDB Light)</div>
+          </div>
+          <i class="fas fa-external-link-alt fonte-link-icon"></i>
+        </a>
+      </div>
+
+      <div class="licenca-box">
+        <i class="fas fa-balance-scale"></i>
+        <div>
+          <strong>Licença e Uso</strong>
+          <p>Os dados utilizados neste projeto são de fontes públicas. O código e a visualização são de uso livre para fins jornalísticos e educacionais, com atribuição à equipe responsável.</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
