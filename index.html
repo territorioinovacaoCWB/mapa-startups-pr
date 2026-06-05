@@ -888,14 +888,19 @@ async function loadData(){
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
     let data=await r.json();
     if(!Array.isArray(data)) throw new Error('JSON não é array');
-    startupsData=data.map(s=>({
+    startupsData=data.filter(s=>{
+      const lat=s.localizacao?s.localizacao.latitude:s.lat;
+      const lng=s.localizacao?s.localizacao.longitude:s.lng;
+      const temNome=(s.nome_fantasia||s.nome||s.razao_social||'').trim();
+      return lat&&lng&&lat>=-25.65&&lat<=-25.20&&lng>=-49.55&&lng<=-49.10&&temNome;
+    }).map(s=>({
       ...s,
-      nome:s.nome_fantasia||s.nome||s.razao_social||'Sem nome',
+      nome:s.nome_fantasia||s.nome||s.razao_social||'',
       area_atuacao:limparArea(s.area_atuacao),
       lat:s.localizacao?s.localizacao.latitude:s.lat,
       lng:s.localizacao?s.localizacao.longitude:s.lng,
       contatos:s.contatos||{email:null,telefone:null}
-    })).filter(s=>s.lat&&s.lng&&s.lat>=-25.65&&s.lat<=-25.20&&s.lng>=-49.55&&s.lng<=-49.10&&(s.nome_fantasia||s.nome||s.razao_social||'').trim());
+    }));
     renderMapAndList('');
   }catch(err){
     document.getElementById('startupListContainer').innerHTML=`<div class="erro-json"><strong>⚠️ Erro ao carregar</strong><br>${err.message}</div>`;
