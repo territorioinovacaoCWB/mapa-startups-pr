@@ -119,9 +119,7 @@ body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a202c; }
 .filter-btn.curitiba-btn { background:#f8fafc; border-color:#cbd5e1; color:#0f172a; }
 .filter-btn.curitiba-btn:hover { background:#e2e8f0; }
 .filter-btn.curitiba-btn.ativo { background:#0f172a; color:white; border-color:#0f172a; }
-.filter-btn.parana-btn { background:#f0fdf4; border-color:#86efac; color:#15803d; }
-.filter-btn.parana-btn:hover { background:#dcfce7; }
-.filter-btn.parana-btn.ativo { background:#059669; color:white; border-color:#059669; }
+
 
 /* ─── MAPA + LISTA ─── */
 .tab-content { display:none; }
@@ -536,7 +534,7 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
   <div class="filter-row">
     <button class="filter-btn mulheres-btn" id="btnMulheres" onclick="toggleFiltro('mulheres')"><i class="fas fa-venus"></i> Mulheres</button>
     <button class="filter-btn curitiba-btn" id="btnCuritiba" onclick="toggleFiltro('curitiba')"><i class="fas fa-city"></i> Curitiba</button>
-    <button class="filter-btn parana-btn"   id="btnParana"   onclick="toggleFiltro('parana')"><i class="fas fa-map"></i> Interior PR</button>
+
   </div>
 </div>
 
@@ -807,7 +805,7 @@ function initMap(){
   const legend=L.control({position:'bottomright'});
   legend.onAdd=()=>{
     const d=L.DomUtil.create('div','legend');
-    d.innerHTML='<div class="legend-item"><span class="dot" style="background:#e91e8c;"></span> Liderada por mulher</div><div class="legend-item"><span class="dot" style="background:#111;"></span> Curitiba</div><div class="legend-item"><span class="dot" style="background:#059669;"></span> Resto do Paraná</div>';
+    d.innerHTML='<div class="legend-item"><span class="dot" style="background:#e91e8c;"></span> Liderada por mulher</div><div class="legend-item"><span class="dot" style="background:#111;"></span> Curitiba</div>';
     return d;
   };
   legend.addTo(map);
@@ -833,10 +831,9 @@ function atualizarMetricas(data){
 
 function toggleFiltro(tipo){
   filtroAtivo=filtroAtivo===tipo?null:tipo;
-  ['Mulheres','Curitiba','Parana'].forEach(n=>document.getElementById('btn'+n).classList.remove('ativo'));
+  ['Mulheres','Curitiba'].forEach(n=>document.getElementById('btn'+n).classList.remove('ativo'));
   if(filtroAtivo==='mulheres') document.getElementById('btnMulheres').classList.add('ativo');
   else if(filtroAtivo==='curitiba') document.getElementById('btnCuritiba').classList.add('ativo');
-  else if(filtroAtivo==='parana') document.getElementById('btnParana').classList.add('ativo');
   renderMapAndList(currentFilter);
 }
 
@@ -846,7 +843,6 @@ function renderMapAndList(filterText=''){
   let f=startupsData.filter(s=>!term||((s.nome||'')+' '+(s.area_atuacao||'')+' '+(s.endereco||'')+' '+(s.municipio||'')).toLowerCase().includes(term));
   if(filtroAtivo==='mulheres') f=f.filter(s=>ehEmpresaMulher(s.nome));
   else if(filtroAtivo==='curitiba') f=f.filter(s=>(s.municipio||s.endereco||'').toUpperCase().includes('CURITIBA'));
-  else if(filtroAtivo==='parana') f=f.filter(s=>!(s.municipio||s.endereco||'').toUpperCase().includes('CURITIBA'));
 
   atualizarMetricas(f);
   document.getElementById('resultCount').textContent=`${f.length} resultado${f.length!==1?'s':''}`;
