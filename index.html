@@ -895,7 +895,7 @@ async function loadData(){
       lat:s.localizacao?s.localizacao.latitude:s.lat,
       lng:s.localizacao?s.localizacao.longitude:s.lng,
       contatos:s.contatos||{email:null,telefone:null}
-    })).filter(s=>s.lat&&s.lng&&s.lat>=-25.65&&s.lat<=-25.20&&s.lng>=-49.55&&s.lng<=-49.10);
+    })).filter(s=>s.lat&&s.lng&&s.lat>=-25.65&&s.lat<=-25.20&&s.lng>=-49.55&&s.lng<=-49.10&&(s.nome||'').trim());
     renderMapAndList('');
   }catch(err){
     document.getElementById('startupListContainer').innerHTML=`<div class="erro-json"><strong>⚠️ Erro ao carregar</strong><br>${err.message}</div>`;
