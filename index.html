@@ -826,8 +826,8 @@ function formatarCapital(v){
   return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);
 }
 
-function getIcon(nome,municipio,endereco){
-  if(ehEmpresaMulher(nome,s.cnpj)) return L.divIcon({className:'',html:`<div style="background:#e91e8c;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 0 6px rgba(233,30,140,0.6);"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
+function getIcon(nome,municipio,endereco,cnpj){
+  if(ehEmpresaMulher(nome,cnpj)) return L.divIcon({className:'',html:`<div style="background:#e91e8c;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 0 6px rgba(233,30,140,0.6);"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
   const c=((municipio||'')+' '+(endereco||'')).toUpperCase().includes('CURITIBA')?'#111':'#059669';
   return L.divIcon({className:'',html:`<div style="background:${c};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 4px rgba(0,0,0,0.3);"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
 }
@@ -885,7 +885,7 @@ function renderMapAndList(filterText=''){
       ${s.contatos?.email&&s.contatos.email!=='nan'?`<br>✉️ ${s.contatos.email}`:''}
       ${s.contatos?.telefone?`<br>📞 ${s.contatos.telefone}`:''}
     </div>`;
-    const mk=L.marker([s.lat,s.lng],{title:s.nome,icon:getIcon(s.nome,s.municipio,s.endereco)}).addTo(map).bindPopup(popup);
+    const mk=L.marker([s.lat,s.lng],{title:s.nome,icon:getIcon(s.nome,s.municipio,s.endereco,s.cnpj)}).addTo(map).bindPopup(popup);
     markers.push(mk);
   });
   if(markers.length>1) map.fitBounds(L.featureGroup(markers).getBounds().pad(0.1));
