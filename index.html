@@ -749,16 +749,26 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const EMPRESAS_MULHERES = new Set([
-  '7 DIGITAL TECH SOLUCOES DIGITAIS LTDA','ADSMAT - PESQUISA E DESENVOLVIMENTO DE BIOMATERIAIS E MATERIAIS DE CERAMICAS AVANCADOS LTDA',
-  'AKADIA CENTRO DE LINGUAS ONLINE LTDA','AZAGROS - AGROTECNOLOGIA LTDA','BREVENLAW TRATAMENTO DE DADOS LTDA',
-  'C. PORTO ASSESSORIA E CONSULTORIA LTDA','COISA DE MULHER LTDA.','COISA DE MULHER LTDA',
-  'LGPD NO FRONT LTDA','PIGMA DESENVOLVIMENTOS LTDA','TRACKTUM TECNOLOGIA S/A',
+const MULHERES_CNPJS = new Set([
+  '00.168.521/0001-52','27.912.048/0001-22','11.024.827/0001-51','37.432.862/0001-01','17.686.302/0001-68',
+  '18.016.524/0001-36','41.218.197/0001-17','18.836.886/0001-73','01.908.517/0001-46','02.317.067/0001-80',
+  '24.657.741/0001-08','40.092.531/0001-76','37.938.660/0001-28','19.317.944/0001-15','32.536.999/0001-84',
+  '41.896.453/0001-25','26.742.070/0001-09','24.233.852/0001-97','34.437.757/0001-69','33.009.575/0001-24',
+  '37.299.313/0001-00','02.248.189/0001-61','37.693.558/0001-00','04.177.442/0001-69','41.739.149/0001-74',
+  '00.187.430/0001-64','09.719.891/0001-05','12.240.195/0001-26','41.848.161/0001-17','22.150.881/0001-60',
+  '41.817.615/0001-92','82.485.657/0001-50','10.199.078/0001-30','34.311.383/0001-30','31.916.376/0001-74',
+  '39.329.102/0001-90','18.287.788/0001-24','15.265.086/0001-51','38.343.912/0001-39','27.662.103/0001-73',
+  '07.558.246/0001-22','15.135.250/0001-06','30.337.925/0001-93','38.423.740/0001-03','25.316.904/0001-51',
+  '31.105.908/0001-93','11.200.005/0001-84','12.793.286/0001-99','00.593.896/0001-60','41.894.994/0001-14',
+  '11.758.411/0001-67','10.818.723/0001-56','00.721.756/0001-20','04.718.008/0001-49','17.378.948/0001-88',
+  '28.787.023/0001-07','03.191.622/0001-32','03.089.027/0001-90','21.924.224/0001-60','03.443.139/0001-06',
+  '01.734.225/0001-34','15.053.942/0001-05','08.011.866/0001-00','27.855.850/0001-28','95.402.020/0001-03',
+  '39.525.064/0001-41','00.336.730/0001-68','17.020.813/0001-46','04.279.406/0001-06','34.255.288/0001-67',
+  '34.622.176/0001-05','11.093.723/0001-07','37.334.317/0001-74','10.413.783/0001-99','13.776.564/0001-62',
+  '35.152.707/0001-06','40.422.117/0001-88','14.833.561/0001-86','10.792.092/0001-43',
 ]);
-function ehEmpresaMulher(nome){
-  if(!nome) return false;
-  const n=nome.trim().toUpperCase();
-  for(const e of EMPRESAS_MULHERES) if(n===e.toUpperCase()||n.startsWith(e.replace(/\.$/,'').toUpperCase())) return true;
+function ehEmpresaMulher(nome, cnpj){
+  if(cnpj && MULHERES_CNPJS.has(cnpj.trim())) return true;
   return false;
 }
 
@@ -817,7 +827,7 @@ function formatarCapital(v){
 }
 
 function getIcon(nome,municipio,endereco){
-  if(ehEmpresaMulher(nome)) return L.divIcon({className:'',html:`<div style="background:#e91e8c;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 0 6px rgba(233,30,140,0.6);"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
+  if(ehEmpresaMulher(nome,s.cnpj)) return L.divIcon({className:'',html:`<div style="background:#e91e8c;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 0 6px rgba(233,30,140,0.6);"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
   const c=((municipio||'')+' '+(endereco||'')).toUpperCase().includes('CURITIBA')?'#111':'#059669';
   return L.divIcon({className:'',html:`<div style="background:${c};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 4px rgba(0,0,0,0.3);"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
 }
@@ -841,7 +851,7 @@ function renderMapAndList(filterText=''){
   markers.forEach(m=>map.removeLayer(m));markers=[];
   const term=filterText.toLowerCase().trim();
   let f=startupsData.filter(s=>!term||((s.nome||'')+' '+(s.area_atuacao||'')+' '+(s.endereco||'')+' '+(s.municipio||'')).toLowerCase().includes(term));
-  if(filtroAtivo==='mulheres') f=f.filter(s=>ehEmpresaMulher(s.nome));
+  if(filtroAtivo==='mulheres') f=f.filter(s=>ehEmpresaMulher(s.nome,s.cnpj));
   else if(filtroAtivo==='curitiba') f=f.filter(s=>(s.municipio||s.endereco||'').toUpperCase().includes('CURITIBA'));
 
   atualizarMetricas(f);
@@ -849,7 +859,7 @@ function renderMapAndList(filterText=''){
   const c=document.getElementById('startupListContainer');
 
   c.innerHTML=f.length?f.map((s,i)=>{
-    const iM=ehEmpresaMulher(s.nome);
+    const iM=ehEmpresaMulher(s.nome,s.cnpj);
     return `<div class="startup-item${iM?' mulher':''}" data-idx="${i}">
       <div class="startup-name">${s.nome}</div>
       <span class="area-badge">${s.cnpj||'CNPJ N/I'}</span>${iM?'<span class="badge-mulher">♀ Liderança Feminina</span>':''}
@@ -868,7 +878,7 @@ function renderMapAndList(filterText=''){
 
   f.forEach(s=>{
     if(!s.lat||!s.lng) return;
-    const iM=ehEmpresaMulher(s.nome);
+    const iM=ehEmpresaMulher(s.nome,s.cnpj);
     const popup=`<div style="font-family:Inter;min-width:180px;font-size:0.8rem;">
       ${iM?'<div style="background:#fce7f3;color:#be185d;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:700;margin-bottom:5px;display:inline-block;">♀ Liderança Feminina</div>':''}
       <strong>${s.nome}</strong><br>📋 ${s.cnpj||'N/I'}<br>📍 ${s.endereco||'N/I'}
