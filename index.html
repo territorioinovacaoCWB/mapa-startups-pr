@@ -772,14 +772,25 @@ function ehEmpresaMulher(nome, cnpj){
   return false;
 }
 
-const listaDeMaterias=[{id:1,data:'2024-05-20',titulo:'O Futuro da Inovação no Paraná',
+const listaDeMaterias=[
+  {id:3,data:'2025-06-01',titulo:'O Código que Dá Cor ao Tato: Conheça a Startup Paranaense que Ganhou o Mundo, mas Luta por Apoio em Casa',
+  descricao:'Sandra Marchi, doutora em Engenharia Mecânica pela UFPR e CEO da SeeColor, desenvolveu uma tecnologia assistiva que permite "ler" as cores através do tato. O método, absorvido em apenas 20 minutos por pessoas com deficiência visual, conquistou prêmios no Japão e nos BRICS — mas opera sem nenhum apoio governamental ou de capital privado no Paraná.',
+  tipo:'texto',url:''},
+  {id:2,data:'2025-06-01',titulo:'O Filtro Humano na Era dos Dados: Como uma Startup Paranaense Transforma a Ciência do Esporte Através da Tecnologia',
+  descricao:'Felipe Pereira, ex-atleta e gestor da CapFoot e Sport Skills, lidera um modelo disruptivo de inteligência de dados aplicada ao futebol. A CapFoot é a primeira empresa da área de Educação Física incubada no hotel tecnológico da UTFPR em mais de duas décadas. O diferencial da startup está na combinação de IA com o critério clínico de especialistas, democratizando o acesso à alta performance esportiva.',
+  tipo:'texto',url:''},
+  {id:1,data:'2024-05-20',titulo:'O Futuro da Inovação no Paraná',
   descricao:'O ecossistema de inovação do Paraná tem se destacado nacionalmente pela resiliência e diversidade de suas startups.',
-  tipo:'youtube',url:'https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&modestbranding=1&rel=0'}];
+  tipo:'youtube',url:'https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&modestbranding=1&rel=0'}
+];
 
 function renderizarMaterias(){
   document.getElementById('materiasContainer').innerHTML=listaDeMaterias.map(m=>{
     const d=new Date(m.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-    return `<div class="card-materia"><span class="data-materia">${d}</span><h3>${m.titulo}</h3><div class="video-wrapper"><iframe src="${m.url}" allowfullscreen></iframe></div><p>${m.descricao}</p></div>`;
+    const midia = m.tipo==='youtube'
+      ? `<div class="video-wrapper"><iframe src="${m.url}" allowfullscreen></iframe></div>`
+      : '';
+    return `<div class="card-materia"><span class="data-materia">${d}</span><h3>${m.titulo}</h3>${midia}<p>${m.descricao}</p></div>`;
   }).join('');
 }
 
