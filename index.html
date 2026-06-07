@@ -174,12 +174,32 @@ body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a202c; }
   background:white; padding:2rem; border-radius:12px;
   box-shadow:0 4px 6px rgba(0,0,0,0.05); margin-bottom:1.5rem;
   max-width:800px; margin-left:auto; margin-right:auto;
+  cursor:pointer; transition:box-shadow 0.2s;
 }
+.card-materia:hover { box-shadow:0 8px 20px rgba(0,0,0,0.1); }
 .card-materia h3 { font-size:1.4rem; color:#0f172a; margin-bottom:0.4rem; }
 .card-materia .data-materia { font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:0.75rem; }
 .card-materia p { line-height:1.65; color:#475569; margin-top:1rem; }
 .video-wrapper { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background:#f1f5f9; margin-top:12px; }
 .video-wrapper iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+
+/* Modal leitor */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal-reader { background:white; border-radius:16px; max-width:720px; width:90%; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; }
+.modal-header { padding:1.5rem 1.5rem 1rem; border-bottom:1px solid #f1f5f9; }
+.modal-header .data-materia { font-size:0.75rem; color:#94a3b8; }
+.modal-header h2 { font-size:1.3rem; color:#0f172a; margin-top:0.3rem; line-height:1.4; }
+.modal-body { flex:1; overflow-y:auto; padding:1.5rem; font-size:1rem; line-height:1.8; color:#334155; }
+.modal-body p { margin-bottom:1.2rem; }
+.modal-body blockquote { border-left:4px solid #667eea; padding:0.6rem 1rem; background:#f8f9ff; border-radius:0 8px 8px 0; margin:1rem 0; font-style:italic; color:#475569; }
+.modal-nav { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; border-top:1px solid #f1f5f9; }
+.modal-nav button { background:#667eea; color:white; border:none; border-radius:8px; padding:0.5rem 1.2rem; cursor:pointer; font-size:0.9rem; transition:background 0.2s; }
+.modal-nav button:disabled { background:#e2e8f0; color:#94a3b8; cursor:default; }
+.modal-nav button:not(:disabled):hover { background:#5a67d8; }
+.modal-progress { font-size:0.8rem; color:#94a3b8; }
+.modal-close { float:right; background:none; border:none; font-size:1.3rem; color:#94a3b8; cursor:pointer; line-height:1; padding:0; }
+.read-hint { font-size:0.72rem; color:#94a3b8; margin-top:0.75rem; display:flex; align-items:center; gap:4px; }
 
 .legend { background:white; padding:10px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); line-height:1.6; font-size:0.72rem; }
 .legend-item { display:flex; align-items:center; gap:7px; }
@@ -745,6 +765,22 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
   </div>
 </div>
 
+<div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
+  <div class="modal-reader">
+    <div class="modal-header">
+      <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">✕</button>
+      <div class="data-materia" id="modalData"></div>
+      <h2 id="modalTitulo"></h2>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-nav">
+      <button id="btnAnterior" onclick="navegarPagina(-1)">← Anterior</button>
+      <span class="modal-progress" id="modalProgresso"></span>
+      <button id="btnProximo" onclick="navegarPagina(1)">Próximo →</button>
+    </div>
+  </div>
+</div>
+
 <footer><i class="fas fa-database"></i> Dados atualizados | Mapa interativo | Fonte: startups_data.json</footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -773,24 +809,107 @@ function ehEmpresaMulher(nome, cnpj){
 }
 
 const listaDeMaterias=[
-  {id:3,data:'2025-06-01',titulo:'O Código que Dá Cor ao Tato: Conheça a Startup Paranaense que Ganhou o Mundo, mas Luta por Apoio em Casa',
-  descricao:'Sandra Marchi, doutora em Engenharia Mecânica pela UFPR e CEO da SeeColor, desenvolveu uma tecnologia assistiva que permite "ler" as cores através do tato. O método, absorvido em apenas 20 minutos por pessoas com deficiência visual, conquistou prêmios no Japão e nos BRICS — mas opera sem nenhum apoio governamental ou de capital privado no Paraná.',
-  tipo:'texto',url:''},
-  {id:2,data:'2025-06-01',titulo:'O Filtro Humano na Era dos Dados: Como uma Startup Paranaense Transforma a Ciência do Esporte Através da Tecnologia',
-  descricao:'Felipe Pereira, ex-atleta e gestor da CapFoot e Sport Skills, lidera um modelo disruptivo de inteligência de dados aplicada ao futebol. A CapFoot é a primeira empresa da área de Educação Física incubada no hotel tecnológico da UTFPR em mais de duas décadas. O diferencial da startup está na combinação de IA com o critério clínico de especialistas, democratizando o acesso à alta performance esportiva.',
-  tipo:'texto',url:''},
   {id:1,data:'2024-05-20',titulo:'O Futuro da Inovação no Paraná',
   descricao:'O ecossistema de inovação do Paraná tem se destacado nacionalmente pela resiliência e diversidade de suas startups.',
-  tipo:'youtube',url:'https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&modestbranding=1&rel=0'}
+  tipo:'youtube',url:'https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&modestbranding=1&rel=0',paginas:[]},
+
+  {id:2,data:'2025-06-01',titulo:'O Filtro Humano na Era dos Dados: Como uma Startup Paranaense Transforma a Ciência do Esporte Através da Tecnologia',
+  descricao:'Felipe Pereira, ex-atleta e gestor da CapFoot e Sport Skills, lidera um modelo disruptivo de inteligência de dados aplicada ao futebol. A CapFoot é a primeira empresa da área de Educação Física incubada no hotel tecnológico da UTFPR em mais de duas décadas.',
+  tipo:'texto',paginas:[
+    `<p>CURITIBA – <em>"O plano de negócio de uma startup é muito robusto. Não adianta a gente ter apenas boas ideias, porque a ideia sozinha não faz a empresa acontecer."</em> A análise é de Felipe Pereira, bacharel em Educação Física pela Universidade Tecnológica Federal do Paraná (UTFPR), ex-atleta de futebol e gestor da CapFoot (Centro de Alta Performance), que atua em paralelo como consultor científico da Sport Skills.</p>
+    <p>Vivendo a transição dos gramados para os bastidores tecnológicos, Pereira lidera um modelo de negócio disruptivo focado na inteligência de dados aplicada ao futebol e a outras modalidades esportivas.</p>
+    <p>A Sport Skills funciona como a plataforma tecnológica mãe, integrando ações modulares e interdisciplinares dentro dos clubes de futebol de maior investimento. Já a CapFoot opera na prestação de serviços e consultoria técnica, preenchendo uma lacuna de mercado ao estender essa mesma tecnologia a clubes com menor poder aquisitivo.</p>
+    <p>O empreendimento carrega um marco histórico regional: a <strong>CapFoot é a primeira empresa da área de Educação Física a ser incubada no hotel tecnológico da UTFPR</strong> em mais de duas décadas de história da instituição.</p>`,
+
+    `<h3 style="font-size:1.1rem;color:#0f172a;margin-bottom:1rem;">Inteligência artificial e a importância do material humano</h3>
+    <p>Em um momento de grande expansão dos sistemas de inteligência artificial, o diferencial defendido pela startup está justamente na combinação da tecnologia de ponta com o critério clínico dos profissionais de saúde e esporte.</p>
+    <blockquote>"Não é somente analisar dado bruto, porque o esporte gera uma gama gigantesca de informações. O nosso papel é capacitar profissionais para gerenciar esse processo. A inteligência artificial atua na velocidade, mas isso não tira a responsabilidade de ter um profissional qualificado por trás."</blockquote>
+    <p>Pereira esclarece que o uso de tecnologia preditiva e machine learning vai além do armazenamento convencional em planilhas. O objetivo é cruzar o histórico do atleta para projetar cenários futuros e prevenir lesões.</p>
+    <p>Ele faz um alerta sobre os modismos do mercado atual: muitas vezes, produtos genéricos recebem o rótulo de inteligência artificial apenas como estratégia de marketing. No caso da Sport Skills, as ferramentas funcionam em uma matriz de dados fechada, buscando respostas exclusivamente na base construída pela própria startup e pelo clube parceiro.</p>`,
+
+    `<h3 style="font-size:1.1rem;color:#0f172a;margin-bottom:1rem;">O ecossistema de inovação e as parcerias privadas</h3>
+    <p>Ao avaliar o cenário de inovação no Paraná, Felipe Pereira enxerga um ambiente positivo para a atração de novas tecnologias, destacando o papel de programas públicos de fomento como o Anjo Inovador, o Projeto Centelha e os editais da Finep.</p>
+    <p>No entanto, ele ressalta que o suporte de grandes corporações privadas costuma ser o diferencial para que uma startup ganhe escala. No caso das empresas lideradas por Pereira, o crescimento foi impulsionado pela parceria com o <strong>Wise Group</strong>, uma companhia de tecnologia com mais de 25 anos de atuação no mercado nacional e internacional.</p>
+    <p>O gestor detalha que os caminhos público e privado possuem dinâmicas distintas. Enquanto os editais governamentais acolhem projetos ainda em fase de ideação, o mercado privado exige produtos mais maduros e focados na viabilidade financeira imediata.</p>`,
+
+    `<h3 style="font-size:1.1rem;color:#0f172a;margin-bottom:1rem;">Desafios setoriais e a conexão com a ciência</h3>
+    <p>Empreender no universo do futebol traz peculiaridades emocionais que interferem diretamente na gestão do negócio. A volatilidade dos resultados em campo exige uma resiliência acima da média dos fundadores.</p>
+    <blockquote>"Se o time perdeu ou não fez gol lá no final de semana, a diretoria às vezes desconta na nossa negociação. É um meio muito volátil, são seis anos de desenvolvimento contínuo e ininterrupto."</blockquote>
+    <p>Além da atuação nos clubes profissionais, a startup defende que a mentalidade de dados e gestão precisa ser expandida para as categorias de base, escolas de futebol e projetos sociais.</p>
+    <p>Mantendo um vínculo estreito com os grupos de pesquisa das universidades, a meta da CapFoot e da Sport Skills permanece centralizada em criar uma ponte sólida entre a teoria acadêmica e a prática esportiva. Trazer a ciência para o campo de jogo é, para a startup, o caminho para transformar o investimento esportivo em resultados reais de saúde, desempenho e revelação de talentos.</p>`
+  ]},
+
+  {id:3,data:'2025-06-01',titulo:'O Código que Dá Cor ao Tato: Conheça a Startup Paranaense que Ganhou o Mundo, mas Luta por Apoio em Casa',
+  descricao:'Sandra Marchi, doutora em Engenharia Mecânica pela UFPR e CEO da SeeColor, desenvolveu uma tecnologia assistiva que permite "ler" as cores através do tato. O método conquistou prêmios no Japão e nos BRICS — mas opera sem nenhum apoio governamental ou de capital privado no Paraná.',
+  tipo:'texto',paginas:[
+    `<p>SÃO JOSÉ DOS PINHAIS – <em>"A cor está em tudo. Ela é uma das informações mais importantes do nosso mundo. No entanto, uma pessoa que não enxerga é privada desse acesso."</em> A constatação é de Sandra Marchi, doutora em Engenharia Mecânica pela Universidade Federal do Paraná (UFPR) e CEO da SeeColor.</p>
+    <p>A startup desenvolveu uma tecnologia assistiva capaz de revolucionar a inclusão visual: um sistema que permite "ler" as cores através do tato. Baseado na teoria das cores e com uma dinâmica que se associa ao mostrador de um relógio, o método exige o aprendizado de apenas oito códigos visuais em alto-relevo.</p>
+    <p>A inovação é tão intuitiva que, enquanto outras tecnologias globais demandam dias de treinamento, o método da SeeColor é absorvido por pessoas com deficiência visual em uma média de <strong>apenas 20 minutos</strong>.</p>
+    <p>Apesar do reconhecimento internacional — prêmios de prestígio no Japão e no bloco dos BRICS —, a trajetória da startup expõe o abismo que existe entre o discurso oficial de fomento à inovação e a realidade enfrentada por empreendedores no Paraná.</p>`,
+
+    `<h3 style="font-size:1.1rem;color:#0f172a;margin-bottom:1rem;">Inovação social: rompendo as barreiras da academia</h3>
+    <p>A SeeColor nasceu diretamente de uma tese de doutorado. Após concluir sua pesquisa na UFPR, Sandra percebeu que precisava cruzar os muros da universidade para que o conhecimento científico gerasse impacto real na sociedade.</p>
+    <blockquote>"A maioria das pesquisas morre dentro das universidades. Se a pessoa não for muito resiliente, já teria desistido."</blockquote>
+    <p>Ao contrário do alfabeto Braille, que varia conforme o idioma e o país, o método da SeeColor utiliza o design universal. Como a teoria das cores é idêntica em qualquer lugar do planeta, o código paranaense pode ser aplicado globalmente, cobrindo até <strong>94 tonalidades diferentes</strong> a partir de eixos, pontos e linhas táteis.</p>
+    <p>O impacto já se estende a museus (permitindo que cegos identifiquem obras de arte como as de Tarsila do Amaral pelas cores), mapas cartográficos de temperatura e paletas de cores no setor da moda — este último premiado e publicado em uma revista científica de Milão.</p>`,
+
+    `<h3 style="font-size:1.1rem;color:#0f172a;margin-bottom:1rem;">O contraste entre prêmios globais e o "zero investimento" local</h3>
+    <p>O sucesso da tecnologia contrasta drasticamente com a falta de suporte financeiro e institucional. A empresa operou com <strong>zero investimento</strong> de capital privado, investidores-anjo ou linhas de crédito tradicionais.</p>
+    <p>Mesmo após ser premiada no BRICS como uma das 17 selecionadas em uma disputa com mais de mil startups globais, a SeeColor enfrentou tentativas de diálogo sem resposta na Secretaria de Inovação do Paraná e em prefeituras da região.</p>
+    <blockquote>"A responsabilidade social e a inovação, na prática, parecem existir mais na teoria, para 'sair bem na foto'. Nós fomos atrás da Secretaria de Inovação do Paraná e o retorno foi zero. Não temos apoio governamental."</blockquote>
+    <p>A startup conquistou grande destaque em mídia nacional espontânea, com passagens pela RPC, TV Globo, Record e Band. Ainda assim, a sustentabilidade financeira do negócio continuou baseada exclusivamente em pequenos editais culturais e no uso de recursos familiares.</p>`,
+
+    `<h3 style="font-size:1.1rem;color:#0f172a;margin-bottom:1rem;">"Democratizar a cor" em um cenário urgente</h3>
+    <p>A urgência por tecnologias como a da SeeColor é reforçada por dados globais de saúde. Atualmente, estima-se que mais de <strong>2 bilhões de pessoas</strong> sofram de alguma deficiência visual no mundo.</p>
+    <p>Com o aumento do tempo de exposição a telas e regimes de trabalho como o home office, que limitam os exercícios naturais de foco do nervo óptico, as projeções indicam que as deficiências visuais podem crescer até <strong>300% nos próximos 30 anos</strong>.</p>
+    <p>O objetivo de Sandra Marchi permanece firme: expandir o método para que grandes indústrias incorporem o relevo em produtos cotidianos, desde embalagens de cosméticos e vestuário até materiais didáticos.</p>
+    <blockquote>"Nós democratizamos a cor. O que nós esperamos para o futuro é que tudo o que tenha cor traga essa informação acessível na ponta dos dedos."</blockquote>`
+  ]}
 ];
+
+let modalPaginaAtual=0, modalMateriaAtual=null;
+
+function abrirModal(id){
+  const m=listaDeMaterias.find(x=>x.id===id);
+  if(!m||m.tipo!=='texto'||!m.paginas.length) return;
+  modalMateriaAtual=m; modalPaginaAtual=0;
+  document.getElementById('modalData').textContent=new Date(m.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('modalTitulo').textContent=m.titulo;
+  renderPagina();
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalBody').scrollTop=0;
+}
+
+function renderPagina(){
+  const m=modalMateriaAtual;
+  document.getElementById('modalBody').innerHTML=m.paginas[modalPaginaAtual];
+  document.getElementById('modalProgresso').textContent=`${modalPaginaAtual+1} / ${m.paginas.length}`;
+  document.getElementById('btnAnterior').disabled=modalPaginaAtual===0;
+  document.getElementById('btnProximo').disabled=modalPaginaAtual===m.paginas.length-1;
+  document.getElementById('modalBody').scrollTop=0;
+}
+
+function navegarPagina(dir){
+  const m=modalMateriaAtual;
+  modalPaginaAtual=Math.max(0,Math.min(m.paginas.length-1,modalPaginaAtual+dir));
+  renderPagina();
+}
+
+function fecharModal(e){
+  if(e.target===document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+}
 
 function renderizarMaterias(){
   document.getElementById('materiasContainer').innerHTML=listaDeMaterias.map(m=>{
     const d=new Date(m.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-    const midia = m.tipo==='youtube'
-      ? `<div class="video-wrapper"><iframe src="${m.url}" allowfullscreen></iframe></div>`
-      : '';
-    return `<div class="card-materia"><span class="data-materia">${d}</span><h3>${m.titulo}</h3>${midia}<p>${m.descricao}</p></div>`;
+    if(m.tipo==='youtube') return `<div class="card-materia"><span class="data-materia">${d}</span><h3>${m.titulo}</h3><div class="video-wrapper"><iframe src="${m.url}" allowfullscreen></iframe></div><p>${m.descricao}</p></div>`;
+    return `<div class="card-materia" onclick="abrirModal(${m.id})">
+      <span class="data-materia">${d}</span>
+      <h3>${m.titulo}</h3>
+      <p>${m.descricao}</p>
+      <div class="read-hint"><i class="fas fa-book-open" style="color:#667eea;font-size:0.7rem;"></i> Clique para ler a matéria completa</div>
+    </div>`;
   }).join('');
 }
 
