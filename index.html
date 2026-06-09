@@ -160,7 +160,8 @@ body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a202c; }
   border-radius:8px; cursor:pointer; transition:all 0.2s;
 }
 .startup-item:hover { background:#f8fafc; transform:translateX(2px); }
-.startup-item.mulher { border-left:3px solid #e91e8c; }
+.startup-item.selected { background:#eff6ff; border-left:3px solid #667eea; box-shadow:0 0 0 2px rgba(102,126,234,0.2); }
+.startup-item.mulher.selected { background:#fdf2f8; border-left:3px solid #e91e8c; box-shadow:0 0 0 2px rgba(233,30,140,0.2); }
 .startup-item.mulher:hover { background:#fdf2f8; }
 .startup-name { font-weight:700; font-size:0.83rem; margin-bottom:0.25rem; color:#0f172a; }
 .area-badge { background:#e0e7ff; color:#4338ca; padding:0.15rem 0.5rem; border-radius:12px; font-size:0.64rem; font-weight:600; display:inline-block; margin-bottom:0.25rem; }
@@ -681,7 +682,7 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
             <div class="team-name">Equipe de Jornalismo</div>
             <div class="team-role">Reportagem & Curadoria de Dados</div>
             <p>Responsável pelo levantamento dos CNPJs, apuração das informações e produção das matérias sobre o ecossistema de startups do Paraná.</p>
-            <p style="margin-top:0.6rem;font-size:0.75rem;color:#0f172a;font-weight:600;"><span style="color:#94a3b8;font-weight:400;">Responsáveis:</span> Gabriel Tadeu Colaço · Gabriel Rodriguez · Gabriel Henrique Stresser · Glória Pomi · Isadora Lopes</p>
+            <p style="margin-top:0.6rem;font-size:0.75rem;color:#0f172a;font-weight:600;"><span style="color:#94a3b8;font-weight:400;">Responsáveis:</span> Gabriel Tadeu Colaço · Gabriel Trautmann · Gabriel Henrique Stresser · Glória Pomi · Isadora Lopes</p>
           </div>
         </div>
         <div class="team-card">
@@ -725,7 +726,7 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
         <div class="team-card">
           <div class="team-avatar" style="background:linear-gradient(135deg,#667eea,#764ba2);"><i class="fas fa-star"></i></div>
           <div class="team-info">
-            <div class="team-name">Reitora Andréia Caldani</div>
+            <div class="team-name">Reitora Eduardo Faria</div>
             <div class="team-role">Apoio Institucional</div>
             <p>Incentivadora de projetos na área de empreendedorismo, acredita que o ambiente universitário pode ser um impulsionador para essas práticas.</p>
           </div>
@@ -1042,6 +1043,11 @@ function toggleFiltro(tipo){
   renderMapAndList(currentFilter);
 }
 
+function highlightItem(item){
+  document.querySelectorAll('.startup-item.selected').forEach(el=>el.classList.remove('selected'));
+  item.classList.add('selected');
+}
+
 function renderMapAndList(filterText=''){
   markers.forEach(m=>map.removeLayer(m));markers=[];
   const term=filterText.toLowerCase().trim();
@@ -1067,11 +1073,12 @@ function renderMapAndList(filterText=''){
   c.querySelectorAll('.startup-item').forEach(item=>{
     item.addEventListener('click',()=>{
       const s=f[+item.dataset.idx];
+      highlightItem(item);
       if(s.lat&&s.lng){map.setView([s.lat,s.lng],15);const m=markers.find(m=>m.options.title===s.nome);if(m)m.openPopup();}
     });
   });
 
-  f.forEach(s=>{
+  f.forEach((s,i)=>{
     if(!s.lat||!s.lng) return;
     const iM=ehEmpresaMulher(s.nome,s.cnpj);
     const popup=`<div style="font-family:Inter;min-width:180px;font-size:0.8rem;">
@@ -1081,6 +1088,10 @@ function renderMapAndList(filterText=''){
       ${s.telefone?`<br>📞 ${s.telefone}`:''}
     </div>`;
     const mk=L.marker([s.lat,s.lng],{title:s.nome,icon:getIcon(s.nome,s.municipio,s.endereco,s.cnpj)}).addTo(map).bindPopup(popup);
+    mk.on('click',()=>{
+      const listItem=c.querySelector(`.startup-item[data-idx="${i}"]`);
+      if(listItem){highlightItem(listItem);listItem.scrollIntoView({behavior:'smooth',block:'center'});}
+    });
     markers.push(mk);
   });
   if(markers.length>1) map.fitBounds(L.featureGroup(markers).getBounds().pad(0.1));
