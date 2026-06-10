@@ -119,6 +119,9 @@ body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a202c; }
 .filter-btn.curitiba-btn { background:#f8fafc; border-color:#cbd5e1; color:#0f172a; }
 .filter-btn.curitiba-btn:hover { background:#e2e8f0; }
 .filter-btn.curitiba-btn.ativo { background:#0f172a; color:white; border-color:#0f172a; }
+.filter-btn.metro-btn { background:#f0fdf4; border-color:#86efac; color:#15803d; }
+.filter-btn.metro-btn:hover { background:#dcfce7; }
+.filter-btn.metro-btn.ativo { background:#16a34a; color:white; border-color:#16a34a; }
 
 
 /* ─── MAPA + LISTA ─── */
@@ -555,6 +558,7 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
   <div class="filter-row">
     <button class="filter-btn mulheres-btn" id="btnMulheres" onclick="toggleFiltro('mulheres')"><i class="fas fa-venus"></i> Mulheres</button>
     <button class="filter-btn curitiba-btn" id="btnCuritiba" onclick="toggleFiltro('curitiba')"><i class="fas fa-city"></i> Curitiba</button>
+    <button class="filter-btn metro-btn"    id="btnMetro"    onclick="toggleFiltro('metro')"><i class="fas fa-map-marked-alt"></i> Região Metropolitana</button>
 
   </div>
 </div>
@@ -1011,7 +1015,7 @@ function initMap(){
   const legend=L.control({position:'bottomright'});
   legend.onAdd=()=>{
     const d=L.DomUtil.create('div','legend');
-    d.innerHTML='<div class="legend-item"><span class="dot" style="background:#e91e8c;"></span> Liderada por mulher</div><div class="legend-item"><span class="dot" style="background:#111;"></span> Curitiba</div>';
+    d.innerHTML='<div class="legend-item"><span class="dot" style="background:#e91e8c;"></span> Liderada por mulher</div><div class="legend-item"><span class="dot" style="background:#111;"></span> Curitiba</div><div class="legend-item"><span class="dot" style="background:#16a34a;"></span> Região Metropolitana</div>';
     return d;
   };
   legend.addTo(map);
@@ -1024,7 +1028,10 @@ function formatarCapital(v){
 
 function getIcon(nome,municipio,endereco,cnpj){
   if(ehEmpresaMulher(nome,cnpj)) return L.divIcon({className:'',html:`<div style="background:#e91e8c;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 0 6px rgba(233,30,140,0.6);"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
-  const c=((municipio||'')+' '+(endereco||'')).toUpperCase().includes('CURITIBA')?'#111':'#059669';
+  const METRO=['SAO JOSE DOS PINHAIS','PINHAIS','COLOMBO','ARAUCARIA','FAZENDA RIO GRANDE','ALMIRANTE TAMANDARE','CAMPO LARGO','CAMPO MAGRO','CONTENDA','MANDIRITUBA','QUATRO BARRAS','CAMPINA GRANDE DO SUL'];
+  const muni=(municipio||'').toUpperCase();
+  const isMetro=METRO.some(m=>muni.includes(m));
+  const c=isMetro?'#16a34a':'#111';
   return L.divIcon({className:'',html:`<div style="background:${c};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 4px rgba(0,0,0,0.3);"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
 }
 
@@ -1037,9 +1044,10 @@ function atualizarMetricas(data){
 
 function toggleFiltro(tipo){
   filtroAtivo=filtroAtivo===tipo?null:tipo;
-  ['Mulheres','Curitiba'].forEach(n=>document.getElementById('btn'+n).classList.remove('ativo'));
+  ['Mulheres','Curitiba','Metro'].forEach(n=>document.getElementById('btn'+n).classList.remove('ativo'));
   if(filtroAtivo==='mulheres') document.getElementById('btnMulheres').classList.add('ativo');
   else if(filtroAtivo==='curitiba') document.getElementById('btnCuritiba').classList.add('ativo');
+  else if(filtroAtivo==='metro') document.getElementById('btnMetro').classList.add('ativo');
   renderMapAndList(currentFilter);
 }
 
@@ -1052,8 +1060,10 @@ function renderMapAndList(filterText=''){
   markers.forEach(m=>map.removeLayer(m));markers=[];
   const term=filterText.toLowerCase().trim();
   let f=startupsData.filter(s=>!term||((s.nome||'')+' '+(s.area_atuacao||'')+' '+(s.endereco||'')+' '+(s.municipio||'')).toLowerCase().includes(term));
+  const METRO_MUNIS = ['SAO JOSE DOS PINHAIS','PINHAIS','COLOMBO','ARAUCARIA','FAZENDA RIO GRANDE','ALMIRANTE TAMANDARE','CAMPO LARGO','CAMPO MAGRO','CONTENDA','MANDIRITUBA','QUATRO BARRAS','CAMPINA GRANDE DO SUL','BOCAIUVA DO SUL','RIO BRANCO DO SUL','CERRO AZUL','DOUTOR ULYSSES','ITAPERUCU','ADRIANOPOLIS','TUNAS DO PARANA'];
   if(filtroAtivo==='mulheres') f=f.filter(s=>ehEmpresaMulher(s.nome,s.cnpj));
   else if(filtroAtivo==='curitiba') f=f.filter(s=>(s.municipio||s.endereco||'').toUpperCase().includes('CURITIBA'));
+  else if(filtroAtivo==='metro') f=f.filter(s=>METRO_MUNIS.some(m=>(s.municipio||'').toUpperCase().includes(m)));
 
   atualizarMetricas(f);
   document.getElementById('resultCount').textContent=`${f.length} resultado${f.length!==1?'s':''}`;
