@@ -315,6 +315,30 @@ body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a202c; }
 
 
 
+
+/* ─── CONTRIBUTION BOX ─── */
+.contribution-box {
+  max-width:900px; margin:1.5rem auto 0 auto; padding:1.5rem 2rem;
+  background:linear-gradient(135deg,#fff7ed,#fed7aa);
+  border:2px solid #fb923c; border-radius:12px;
+  display:flex; gap:1.2rem; align-items:flex-start;
+}
+.contribution-box i {
+  font-size:1.5rem; color:#c2410c; flex-shrink:0; margin-top:2px;
+}
+.contribution-content { flex:1; }
+.contribution-content p {
+  font-size:0.9rem; color:#92400e; line-height:1.6; margin-bottom:0.6rem;
+}
+.contribution-content p strong { color:#7c2d12; font-weight:700; }
+.contribution-content p:last-child { margin-bottom:0; }
+
+@media(max-width:768px){
+  .contribution-box { padding:1.25rem 1rem; gap:0.8rem; margin-top:1rem; }
+  .contribution-box i { font-size:1.2rem; }
+  .contribution-content p { font-size:0.85rem; }
+}
+
 footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; border-top:1px solid #e2e8f0; }
 
 @media(max-width:768px){
@@ -814,18 +838,6 @@ footer { text-align:center; padding:1.5rem; font-size:0.68rem; color:#94a3b8; bo
   </div>
 </div>
 
-
-      <div class="contact-box">
-        <i class="fas fa-envelope-circle-check"></i>
-        <div class="contact-content">
-          <h3>Notou alguma incorreção?</h3>
-          <p>Encontrou uma startup que não está no mapa? Tem informações para atualizar? Clique abaixo para contribuir com o projeto.</p>
-          <a href="https://docs.google.com/forms/d/e/PLACEHOLDER/viewform?usp=sf_link" target="_blank" class="contact-btn">
-            <i class="fas fa-pencil-alt"></i> Enviar Correção ou Inclusão
-          </a>
-          <p class="contact-help">Você pode também escrever para <strong>territorio.inovacao@up.edu.br</strong></p>
-        </div>
-      </div>
 
 <footer><i class="fas fa-database"></i> Dados atualizados | Mapa interativo | Fonte: startups_data.json</footer>
 
