@@ -1048,8 +1048,10 @@ function getIcon(nome,municipio,endereco,cnpj){
   const METRO=['SAO JOSE DOS PINHAIS','PINHAIS','COLOMBO','ARAUCARIA','FAZENDA RIO GRANDE','ALMIRANTE TAMANDARE','CAMPO LARGO','CAMPO MAGRO','CONTENDA','MANDIRITUBA','QUATRO BARRAS','CAMPINA GRANDE DO SUL','BOCAIUVA DO SUL','RIO BRANCO DO SUL','CERRO AZUL','DOUTOR ULYSSES','ITAPERUCU','ADRIANOPOLIS','TUNAS DO PARANA'];
   const muniNorm=normalizarTexto(municipio);
   const muniTexto=muniNorm||normalizarTexto(endereco);
-  const isMetro=METRO.some(m=>muniTexto.includes(m))&&!muniTexto.includes('CURITIBA');
-  const c=isMetro?'#16a34a':'#0b84f3';
+  const isMetro = METRO.some(m => muniTexto.includes(m));
+  const isCuritiba = muniTexto.includes('CURITIBA');
+  // Se for da Região Metropolitana, usamos a cor verde (#16a34a), mesmo que "CURITIBA" apareça no endereço
+  const c = isMetro ? '#16a34a' : (isCuritiba ? '#0b84f3' : '#0b84f3');
   return L.divIcon({className:'',html:`<div style="background:${c};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 4px rgba(0,0,0,0.3);"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
 }
 
@@ -1080,11 +1082,16 @@ function renderMapAndList(filterText=''){
   let f=startupsData.filter(s=>!term||((s.nome||'')+' '+(s.area_atuacao||'')+' '+(s.endereco||'')+' '+(s.municipio||'')).toLowerCase().includes(term));
   const METRO_MUNIS = ['SAO JOSE DOS PINHAIS','PINHAIS','COLOMBO','ARAUCARIA','FAZENDA RIO GRANDE','ALMIRANTE TAMANDARE','CAMPO LARGO','CAMPO MAGRO','CONTENDA','MANDIRITUBA','QUATRO BARRAS','CAMPINA GRANDE DO SUL','BOCAIUVA DO SUL','RIO BRANCO DO SUL','CERRO AZUL','DOUTOR ULYSSES','ITAPERUCU','ADRIANOPOLIS','TUNAS DO PARANA'];
   if(filtroAtivo==='mulheres') f=f.filter(s=>ehEmpresaMulher(s.nome,s.cnpj));
-  else if(filtroAtivo==='curitiba') f=f.filter(s=>(s.municipio||s.endereco||'').toUpperCase().includes('CURITIBA'));
+  else if(filtroAtivo==='curitiba') f=f.filter(s=>{
+    const muniNorm = normalizarTexto(s.municipio);
+    const t = muniNorm || normalizarTexto(s.endereco);
+    const isMetro = METRO_MUNIS.some(m => t.includes(m));
+    return t.includes('CURITIBA') && !isMetro;
+  });
   else if(filtroAtivo==='metro') f=f.filter(s=>{
-    const muniNorm=normalizarTexto(s.municipio);
-    const t=muniNorm||normalizarTexto(s.endereco);
-    return METRO_MUNIS.some(m=>t.includes(m))&&!t.includes('CURITIBA');
+    const muniNorm = normalizarTexto(s.municipio);
+    const t = muniNorm || normalizarTexto(s.endereco);
+    return METRO_MUNIS.some(m => t.includes(m));
   });
 
   atualizarMetricas(f);
