@@ -116,9 +116,9 @@ body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a202c; }
 .filter-btn.mulheres-btn { background:#fdf2f8; border-color:#f9a8d4; color:#be185d; }
 .filter-btn.mulheres-btn:hover { background:#fce7f3; }
 .filter-btn.mulheres-btn.ativo { background:#e91e8c; color:white; border-color:#e91e8c; }
-.filter-btn.curitiba-btn { background:#fef2f2; border-color:#fca5a5; color:#b91c1c; }
-.filter-btn.curitiba-btn:hover { background:#fee2e2; }
-.filter-btn.curitiba-btn.ativo { background:#ef4444; color:white; border-color:#ef4444; }
+.filter-btn.curitiba-btn { background:#eff6ff; border-color:#93c5fd; color:#1d4ed8; }
+.filter-btn.curitiba-btn:hover { background:#dbeafe; }
+.filter-btn.curitiba-btn.ativo { background:#0b84f3; color:white; border-color:#0b84f3; }
 .filter-btn.metro-btn { background:#f0fdf4; border-color:#86efac; color:#15803d; }
 .filter-btn.metro-btn:hover { background:#dcfce7; }
 .filter-btn.metro-btn.ativo { background:#16a34a; color:white; border-color:#16a34a; }
@@ -163,7 +163,7 @@ body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a202c; }
   border-radius:8px; cursor:pointer; transition:all 0.2s;
 }
 .startup-item:hover { background:#f8fafc; transform:translateX(2px); }
-.startup-item.selected { background:#fef2f2; border:2px solid #ef4444; box-shadow:0 0 0 2px rgba(239,68,68,0.15); }
+.startup-item.selected { background:#eff6ff; border:2px solid #0b84f3; box-shadow:0 0 0 2px rgba(11,132,243,0.15); }
 .startup-item.mulher.selected { background:#fdf2f8; border:2px solid #e91e8c; box-shadow:0 0 0 2px rgba(233,30,140,0.15); }
 .startup-item.mulher:hover { background:#fdf2f8; }
 .startup-name { font-weight:700; font-size:0.83rem; margin-bottom:0.25rem; color:#0f172a; }
@@ -1015,7 +1015,7 @@ function initMap(){
   const legend=L.control({position:'bottomright'});
   legend.onAdd=()=>{
     const d=L.DomUtil.create('div','legend');
-    d.innerHTML='<div class="legend-item"><span class="dot" style="background:#e91e8c;"></span> Liderada por mulher</div><div class="legend-item"><span class="dot" style="background:#ef4444;"></span> Curitiba</div><div class="legend-item"><span class="dot" style="background:#16a34a;"></span> Região Metropolitana</div>';
+    d.innerHTML='<div class="legend-item"><span class="dot" style="background:#e91e8c;"></span> Liderada por mulher</div><div class="legend-item"><span class="dot" style="background:#0b84f3;"></span> Curitiba</div><div class="legend-item"><span class="dot" style="background:#16a34a;"></span> Região Metropolitana</div>';
     return d;
   };
   legend.addTo(map);
@@ -1035,7 +1035,7 @@ function getIcon(nome,municipio,endereco,cnpj){
   const METRO=['SAO JOSE DOS PINHAIS','PINHAIS','COLOMBO','ARAUCARIA','FAZENDA RIO GRANDE','ALMIRANTE TAMANDARE','CAMPO LARGO','CAMPO MAGRO','CONTENDA','MANDIRITUBA','QUATRO BARRAS','CAMPINA GRANDE DO SUL','BOCAIUVA DO SUL','RIO BRANCO DO SUL','CERRO AZUL','DOUTOR ULYSSES','ITAPERUCU','ADRIANOPOLIS','TUNAS DO PARANA'];
   const muniTexto=normalizarTexto(municipio)+' '+normalizarTexto(endereco);
   const isMetro=METRO.some(m=>muniTexto.includes(m))&&!muniTexto.includes('CURITIBA');
-  const c=isMetro?'#16a34a':'#ef4444';
+  const c=isMetro?'#16a34a':'#0b84f3';
   return L.divIcon({className:'',html:`<div style="background:${c};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 4px rgba(0,0,0,0.3);"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
 }
 
