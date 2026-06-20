@@ -909,6 +909,88 @@ function ehEmpresaMulher(nome, cnpj){
   return false;
 }
 
+
+// ── MAPEAMENTO DE SINÔNIMOS PARA BUSCA ──
+const sinonimos = {
+  'saúde': ['saúde','medicina','farmácia','veterinária','enfermagem','fisioterapia','odontologia','hospital','clínica','wellness','psicologia','nutrição','atendimento médico','serviços de saúde','atividades veterinárias'],
+  'educação': ['educação','ensino','aprendizagem','escola','universidade','treinamento','capacitação','plataforma educacional','edtech','inovação pedagógica','serviços de educação','educação profissional'],
+  'agro': ['agricultura','agronegócio','agrotecnologia','horticultura','pecuária','pesca','agroindústria','floresta','silvicultura','serviços agrícolas'],
+  'energia': ['energia','elétrica','solar','eólica','combustível','petróleo','gás','sustentável','renováveis','hidrelétrica','produção de energia'],
+  'varejo': ['varejo','comércio','loja','e-commerce','venda','mercado','supermercado','shopping','retail','comércio varejista'],
+  'logística': ['logística','transporte','entrega','distribuição','armazenagem','cargo','frete','serviços de transporte'],
+  'turismo': ['turismo','hotelaria','hospedagem','viagem','lazer','eventos','restaurante','gastronomia','alojamento'],
+  'industrial': ['industrial','manufatura','fábrica','produção','máquina','equipamento','química','metalurgia','têxtil','processamento'],
+  'financeiro': ['banco','finança','seguros','investimento','crédito','pagamento','moeda','cartão','seguros','serviços financeiros'],
+  'imobiliário': ['imóvel','imobiliária','construção','arquitetura','real estate','incorporação','serviços imobiliários']
+};
+
+function buscarPorSinonimos(termo) {
+  const termoLower = termo.toLowerCase().trim();
+  for(const [categoria, palavras] of Object.entries(sinonimos)) {
+    if(palavras.some(p => termoLower.includes(p) || p.includes(termoLower))) {
+      return categoria;
+    }
+  }
+  return termoLower;
+}
+
+// ── MAPA DE CATEGORIAS DE ÁREAS DE ATUAÇÃO ──
+const mapAreaCategoria = {"Comércio atacadista de equipamentos de informática": "Tecnologia & Inovação", "Comércio varejista especializado de equipamentos e suprimentos de informática": "Tecnologia & Inovação", "Consultoria em tecnologia da informação": "Tecnologia & Inovação", "Desenvolvimento de programas de computador sob encomenda": "Tecnologia & Inovação", "Desenvolvimento e licenciamento de programas de computador customizáveis": "Tecnologia & Inovação", "Desenvolvimento e licenciamento de programas de computador não-customizáveis": "Tecnologia & Inovação", "Esporte & Tecnologia": "Tecnologia & Inovação", "Outras atividades de telecomunicações não especificadas anteriormente": "Tecnologia & Inovação", "Pesquisa e desenvolvimento experimental em ciências físicas e naturais": "Tecnologia & Inovação", "Portais, provedores de conteúdo e outros serviços de informação na internet": "Tecnologia & Inovação", "Portais, provedores de conteúdo e outros serviços de informação na internet (Dispensada *)": "Tecnologia & Inovação", "Reprodução de software em qualquer suporte": "Tecnologia & Inovação", "Serviços de engenharia": "Tecnologia & Inovação", "Suporte técnico, manutenção e outros serviços em tecnologia da informação": "Tecnologia & Inovação", "Tecnologia Assistiva": "Tecnologia & Inovação", "Tratamento de dados, provedores de serviços de aplicação e serviços de hospedagem na internet": "Tecnologia & Inovação", "Treinamento em informática": "Tecnologia & Inovação", "Aluguel de material médico": "Saúde", "Atividades de apoio à gestão de saúde": "Saúde", "Atividades de fisioterapia": "Saúde", "Atividades veterinárias": "Saúde", "Edtech & Saúde Mental": "Saúde", "Educação profissional de nível técnico": "Educação", "Ensino de música": "Educação", "Outras atividades de ensino não especificadas anteriormente": "Educação", "Treinamento em desenvolvimento profissional e gerencial": "Educação", "Comércio atacadista de defensivos agrícolas, adubos, fertilizantes e corretivos do solo": "Comércio & Logística", "Comércio varejista de artigos esportivos": "Comércio & Logística", "Comércio varejista de brinquedos e artigos recreativos": "Comércio & Logística", "Comércio varejista de outros artigos de uso doméstico não especificados anteriormente": "Comércio & Logística", "Comércio varejista de outros produtos não especificados anteriormente": "Comércio & Logística", "Comércio varejista de plantas e flores naturais": "Comércio & Logística", "Comércio varejista de produtos alimentícios em geral ou especializado em produtos alimentícios não especificados anteriormente": "Comércio & Logística", "Organização logística do transporte de carga": "Comércio & Logística", "Construção de embarcações para esporte e lazer": "Construção & Imóveis", "Fabricação de artefatos de material plástico para uso na construção, exceto tubos e acessórios": "Construção & Imóveis", "Serviços especializados para construção não especificados anteriormente": "Construção & Imóveis", "Fabricação de aditivos de uso industrial": "Indústria", "Fabricação de aparelhos e equipamentos de medida, teste e controle": "Indústria", "Fabricação de bebidas isotônicas": "Indústria", "Fabricação de componentes eletrônicos": "Indústria", "Fabricação de estruturas metálicas": "Indústria", "Fabricação de madeira laminada e de chapas de madeira compensada, prensada e aglomerada": "Indústria", "Fabricação de motocicletas": "Indústria", "Fabricação de máquinas e equipamentos para a agricultura e pecuária, exceto para irrigação": "Indústria", "Fabricação de máquinas e equipamentos para uso industrial específico não especificados anteriormente, peças e acessórios": "Indústria", "Fabricação de máquinas-ferramenta": "Indústria", "Fabricação de outras máquinas e equipamentos de uso geral não especificados anteriormente, peças e acessórios": "Indústria", "Fabricação de produtos diversos não especificados anteriormente": "Indústria", "Fabricação de válvulas, registros e dispositivos semelhantes": "Indústria", "Agências de publicidade": "Publicidade & Marketing", "Consultoria em publicidade": "Publicidade & Marketing", "Marketing direto": "Publicidade & Marketing", "Serviços de reservas e outros serviços de turismo não especificados anteriormente": "Turismo & Hospitalidade", "121101": "Serviços", "1340501": "Serviços", "1629301": "Serviços", "1821100": "Serviços", "1830003": "Serviços", "2099199": "Serviços", "2543800": "Serviços", "3321000": "Serviços", "3811400": "Serviços", "4120400": "Serviços", "4321500": "Serviços", "4322301": "Serviços", "4399103": "Serviços", "4511101": "Serviços", "4511102": "Serviços", "4520005": "Serviços", "4611700": "Serviços", "4613300": "Serviços", "4614100": "Serviços", "4619200": "Serviços", "4651601": "Serviços", "4711302": "Serviços", "4713004": "Serviços", "4723700": "Serviços", "4729699": "Serviços", "4751201": "Serviços", "4752100": "Serviços", "4753900": "Serviços", "4754701": "Serviços", "4757100": "Serviços", "4759899": "Serviços", "4763602": "Serviços", "4781400": "Serviços", "4789001": "Serviços", "4789003": "Serviços", "4789008": "Serviços", "4923001": "Serviços", "4923002": "Serviços", "5229099": "Serviços", "5510801": "Serviços", "5611201": "Serviços", "5611204": "Serviços", "5611205": "Serviços", "5620102": "Serviços", "5620104": "Serviços", "5811500": "Serviços", "5812301": "Serviços", "5812302": "Serviços", "5819100": "Serviços", "5829800": "Serviços", "5911101": "Serviços", "5911102": "Serviços", "5911199": "Serviços", "5912001": "Serviços", "5912002": "Serviços", "5912099": "Serviços", "5920100": "Serviços", "6010100": "Serviços", "6021700": "Serviços", "6110803": "Serviços", "6190601": "Serviços", "6190699": "Serviços", "6201501": "Serviços", "6201502": "Serviços", "6202300": "Serviços", "6203100": "Serviços", "6204000": "Serviços", "6209100": "Serviços", "6311900": "Serviços", "6319400": "Serviços", "6399200": "Serviços", "6462000": "Serviços", "6463800": "Serviços", "6492100": "Serviços", "6619302": "Serviços", "6619399": "Serviços", "6622300": "Serviços", "6810201": "Serviços", "6810202": "Serviços", "6821801": "Serviços", "6821802": "Serviços", "6822600": "Serviços", "6920601": "Serviços", "7020400": "Serviços", "7111100": "Serviços", "7112000": "Serviços", "7119702": "Serviços", "7119704": "Serviços", "7120100": "Serviços", "7210000": "Serviços", "7311400": "Serviços", "7312200": "Serviços", "7319002": "Serviços", "7319003": "Serviços", "7319004": "Serviços", "7319099": "Serviços", "7320300": "Serviços", "7410202": "Serviços", "7420001": "Serviços", "7420004": "Serviços", "7490101": "Serviços", "7490102": "Serviços", "7490103": "Serviços", "7490104": "Serviços", "7490105": "Serviços", "7490199": "Serviços", "7721700": "Serviços", "7722500": "Serviços", "7733100": "Serviços", "7739099": "Serviços", "7740300": "Serviços", "7810800": "Serviços", "7820500": "Serviços", "7911200": "Serviços", "7912100": "Serviços", "8211300": "Serviços", "8219901": "Serviços", "8219999": "Serviços", "8220200": "Serviços", "8230001": "Serviços", "8230002": "Serviços", "8291100": "Serviços", "8299799": "Serviços", "8411600": "Serviços", "8532500": "Serviços", "8533300": "Serviços", "8550302": "Serviços", "8592902": "Serviços", "8592903": "Serviços", "8592999": "Serviços", "8593700": "Serviços", "8599603": "Serviços", "8599604": "Serviços", "8599699": "Serviços", "8630504": "Serviços", "8650003": "Serviços", "8650005": "Serviços", "8650006": "Serviços", "9001901": "Serviços", "9001902": "Serviços", "9001906": "Serviços", "9001999": "Serviços", "9002702": "Serviços", "910600": "Serviços", "9313100": "Serviços", "9319101": "Serviços", "9329899": "Serviços", "9411100": "Serviços", "9412099": "Serviços", "9430800": "Serviços", "9493600": "Serviços", "9499500": "Serviços", "9511800": "Serviços", "9512600": "Serviços", "9521500": "Serviços", "9529102": "Serviços", "9601701": "Serviços", "9602501": "Serviços", "9602502": "Serviços", "9609208": "Serviços", "9609299": "Serviços", "Anjo Inovador PR 2024": "Serviços", "Atividades associativas não especificadas anteriormente": "Serviços", "Atividades de cobranças e informações cadastrais": "Serviços", "Atividades de consultoria em gestão empresarial": "Serviços", "Atividades de contabilidade": "Serviços", "Atividades de intermediação e agenciamento de serviços e negócios em geral, exceto imobiliários": "Serviços", "Atividades paisagísticas": "Serviços", "Edição de revistas": "Serviços", "Geração de energia elétrica": "Serviços", "Gestão de ativos intangíveis não-financeiros": "Serviços", "Outras atividades de prestação de serviços de informação não especificadas anteriormente": "Serviços", "Outras atividades profissionais, científicas e técnicas não especificadas anteriormente": "Serviços", "Preparação de documentos e serviços especializados de apoio administrativo não especificados anteriormente": "Serviços", "Produção de mudas e outras formas de propagação vegetal, certificadas": "Serviços", "Promoção de vendas": "Serviços", "Seleção e agenciamento de mão-de-obra": "Serviços", "Serviços combinados de escritório e apoio administrativo": "Serviços", "Serviços de agronomia e de consultoria às atividades agrícolas e pecuárias": "Serviços", "Serviços de cartografia, topografia e geodésia": "Serviços"};
+
+function obterCategoriaArea(area) {
+  if(!area) return 'Serviços';
+  const area_trim = String(area).trim();
+  return mapAreaCategoria[area_trim] || 'Serviços';
+}
+
+// Mapeamento de buscas por categoria
+const buscasPorCategoria = {
+  'saúde': 'Saúde',
+  'educação': 'Educação',
+  'tecnologia': 'Tecnologia & Inovação',
+  'tech': 'Tecnologia & Inovação',
+  'comércio': 'Comércio & Logística',
+  'logística': 'Comércio & Logística',
+  'construção': 'Construção & Imóveis',
+  'imóvel': 'Construção & Imóveis',
+  'indústria': 'Indústria',
+  'publicidade': 'Publicidade & Marketing',
+  'marketing': 'Publicidade & Marketing',
+  'turismo': 'Turismo & Hospitalidade',
+  'hotel': 'Turismo & Hospitalidade'
+};
+
+function buscarPorCategoria(termo) {
+  const termo_lower = termo.toLowerCase().trim();
+  for(const [palavra, cat] of Object.entries(buscasPorCategoria)) {
+    if(termo_lower.includes(palavra)) return cat;
+  }
+  return null;
+}
+
+const categoriasAreas = {
+
+// ── CONTORNO DE CURITIBA ──
+const curitibaBoundary = {
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "properties": {"name": "Curitiba"},
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[
+        [-49.1, -25.35], [-49.15, -25.35], [-49.2, -25.36], [-49.25, -25.37],
+        [-49.3, -25.4], [-49.32, -25.42], [-49.33, -25.45], [-49.32, -25.48],
+        [-49.3, -25.5], [-49.28, -25.52], [-49.25, -25.53], [-49.22, -25.54],
+        [-49.2, -25.55], [-49.18, -25.56], [-49.15, -25.56], [-49.12, -25.55],
+        [-49.1, -25.54], [-49.08, -25.53], [-49.07, -25.51], [-49.06, -25.49],
+        [-49.05, -25.47], [-49.04, -25.45], [-49.04, -25.42], [-49.05, -25.4],
+        [-49.07, -25.38], [-49.08, -25.37], [-49.1, -25.35]
+      ]]
+    }
+  }]
+};
+
 const listaDeMaterias=[
   {id:1,data:'2026-06-01',titulo:'O Futuro da Inovação no Paraná',
   descricao:'O ecossistema de inovação do Paraná tem se destacado nacionalmente pela resiliência e diversidade de suas startups.',
@@ -1100,6 +1182,10 @@ function initMap(){
     return d;
   };
   legend.addTo(map);
+  
+  // Adicionar contorno de Curitiba
+  const style = { color: '#667eea', weight: 3, opacity: 0.8, fill: false };
+  L.geoJSON(curitibaBoundary, { style: style }).addTo(map);
 }
 
 function formatarCapital(v){
